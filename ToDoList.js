@@ -1,12 +1,14 @@
 import React, {useState} from 'react';
 import { KeyboardAvoidingView, TextInput, Platform, StyleSheet, Text, View, Pressable, Modal } from 'react-native';
 import {useHeaderHeight } from '@react-navigation/elements'
+import DatePicker from 'react-native-modern-datepicker'
 import ToDoObject from './components/ToDoObject';
 
 export default function ToDoList() {
   const [toDoObject, setToDo] = useState();
   const [ToDoItems, setToDoItems] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const 
 
   const AddToDoToList = () => {
     setToDoItems([...ToDoItems, toDoObject])
@@ -48,9 +50,13 @@ export default function ToDoList() {
       }}>
         <View
         style={styles.DatePickerStyle}>
-          <DatePicker>
-            
-          </DatePicker>
+          <DatePicker
+          mode='calendar'
+          selected={date}
+          onDateChange={handleChange}
+          />
+
+          
 
 
         </View>
