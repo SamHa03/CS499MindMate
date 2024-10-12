@@ -10,12 +10,16 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~3.2.3",
-    "expo": "^51.0.36",
+    "@react-navigation/native": "^6.1.18",
+    "@react-navigation/native-stack": "^6.11.0",
+    "@react-navigation/stack": "^6.4.1",
+    "expo": "^51.0.37",
     "expo-status-bar": "~1.12.1",
     "global": "^4.4.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.74.5",
+    "react-native-modern-datepicker": "^1.0.0-beta.91",
     "react-native-web": "~0.19.10",
     "yarn": "^1.22.22"
   },

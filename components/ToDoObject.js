@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-web';
 
-const Task = (props) => {
+const ToDoObject = (props) => {
 
     return (
     <View style={styles.item}>
@@ -53,4 +53,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Task;
+export default ToDoObject;
