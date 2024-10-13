@@ -1,6 +1,5 @@
 import React from 'react';
 import {View, Text, StyleSheet } from 'react-native';
-import { TouchableOpacity } from 'react-native-web';
 
 const ToDoObject = (props) => {
 
@@ -8,7 +7,7 @@ const ToDoObject = (props) => {
     <View style={styles.item}>
         <View style={styles.itemLeft}>
             <View style={styles.square}></View>
-            <Text style={styles.itemText}>{props.Text}</Text>
+            <Text style={styles.itemText}>{props.name}  Due: {props.date}</Text>
         </View>
         <View style={styles.circular}></View>
     </View>

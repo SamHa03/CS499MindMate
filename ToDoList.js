@@ -1,45 +1,42 @@
 import React, {useState} from 'react';
-import { KeyboardAvoidingView, TextInput, Platform, StyleSheet, Text, View, Pressable, Modal } from 'react-native';
+import { KeyboardAvoidingView, TextInput, Platform, StyleSheet, Text, View, Pressable, Modal, Button } from 'react-native';
 import {useHeaderHeight } from '@react-navigation/elements'
-import DatePicker from 'react-native-modern-datepicker'
+import DateTimePicker from '@react-native-community/datetimepicker';
 import ToDoObject from './components/ToDoObject';
 
 export default function ToDoList() {
-  const [toDoObject, setToDo] = useState();
-  const [ToDoItems, setToDoItems] = useState([]);
+  
+  {/* To Do Name */}
+  const [toDoName, setToDoName] = useState();
+  const [toDoNames, setToDoNames] = useState([]);
+  
+  {/*Date picking for each To Do*/}
+  const [date, setDate] = useState(new Date());
+  const [toDoDates, setToDoDates] = useState([]);
+  
+  {/*Bringing up the Add New To Do */}
   const [modalVisible, setModalVisible] = useState(false);
-  const 
 
-  const AddToDoToList = () => {
-    setToDoItems([...ToDoItems, toDoObject])
-    setToDo(null);
+  {/* Date Picker Functions */}
+  const onChange =(e, selectedDate) => {
+    setDate(selectedDate);
+  };
+
+  {/*Creating a new Task*/}
+  function AddToDo(){
+    console.log(toDoName, date.toLocaleString());
+    setToDoNames([...toDoNames, toDoName]);
+    setToDoDates([...toDoDates, date.toLocaleString()]);
+    
+    
   }
-
-  const completeToDo = (index) => {
-    let itemsCopy = [...ToDoItems];
-    itemsCopy.splice(index,1);
-    setToDoItems(itemsCopy);
-  }
-
+  
 
 
   return (
     <View style={styles.container}>
-      {/* Task to do list UI*/}
       <View style={styles.toDoWrapper}>
       
-        <View style={styles.items}>
-          {/*This is where the taskes will go*/}
-          {
-            ToDoItems.map((item, index) => {
-              return (
-              <Pressable key={index} onPress={() => completeToDo(index)}>
-                <ToDoObject Text={item}/>
-              </Pressable>
-              )
-            })
-          }
-        </View>
       </View>
 
       <Modal
@@ -48,23 +45,47 @@ export default function ToDoList() {
         onRequestClose={() => {
           setModalVisible(!modalVisible)
       }}>
-        <View
-        style={styles.DatePickerStyle}>
-          <DatePicker
-          mode='calendar'
-          selected={date}
-          onDateChange={handleChange}
-          />
-
-          
-
-
+        <View >
+          <Text style={styles.NewToDoTitle}>New To Do</Text>
         </View>
         
-        
+        <View style ={styles.ToDoOptionWrapper} >
+          <View><Text>Name: </Text></View>
+          <View>
+            <TextInput 
+            placeholderTextColor={'gray'} 
+            placeholder={'Name goes here'}
+            value={toDoName}
+            onChangeText={setToDoName}
+            />
+          </View>
+        </View>
+
+
+        <Pressable>
+        <View style={styles.ToDoOptionWrapper}>
+          <Text>Due Date: </Text>
+          <DateTimePicker
+            value={date}
+            mode={'date'}
+            is24Hour={true}
+            onChange={onChange}
+          />
+          <DateTimePicker
+            value={date}
+            mode={'time'}
+            is24Hour={true}
+            onChange={onChange}
+          />
+            
+        </View>
+        </Pressable>
+
+
+
         <View style={styles.DoneButtonContainer}>
         <Pressable
-          onPress={() => setModalVisible(!modalVisible)}
+          onPress={() => {setModalVisible(!modalVisible); AddToDo(); }}
           style = {styles.DoneButtonWrapper}
           >
             <Text style={styles.DoneButtonText}>Done</Text>
@@ -74,7 +95,7 @@ export default function ToDoList() {
       </Modal>
 
       <View style={styles.AddToDoToListContainer}>
-        <Pressable onPress={() => setModalVisible(!modalVisible)} >
+        <Pressable onPress={() => {setModalVisible(!modalVisible); }} >
           <Text style ={styles.addToDoButtonText}>Add To Do</Text>
         </Pressable>
       </View>
@@ -82,6 +103,7 @@ export default function ToDoList() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -98,7 +120,26 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
 
-  DatePickerStyle: {
+  NewToDoTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    paddingTop: 80,
+    paddingHorizontal: 20,
+
+  },
+
+  ToDoOptionWrapper: {
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    backgroundColor: "#FFF",
+    borderColor: '#C0C0C0',
+    borderWidth: 1,
+    Width: 250,
+    marginBottom: 5,
+    flexDirection: 'row',
+  },
+
+  ToDoOptionDateWrapper: {
 
   },
 
@@ -126,6 +167,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 30,
     textAlign: 'center'
+  },
+
+  datePicker:{
+    height: 120,
+    marginTop:-10,
   },
 
 });
