@@ -6,13 +6,14 @@ import ToDoObject from './components/ToDoObject';
 
 export default function ToDoList() {
   
+  {/* To Do Test */}
+  const [toDoList, setToDoList] = useState([]);
+
   {/* To Do Name */}
   const [toDoName, setToDoName] = useState();
-  const [toDoNames, setToDoNames] = useState([]);
   
   {/*Date picking for each To Do*/}
   const [date, setDate] = useState(new Date());
-  const [toDoDates, setToDoDates] = useState([]);
   
   {/*Bringing up the Add New To Do */}
   const [modalVisible, setModalVisible] = useState(false);
@@ -22,21 +23,41 @@ export default function ToDoList() {
     setDate(selectedDate);
   };
 
-  {/*Creating a new Task*/}
+  {/*Creating a new To Do*/}
   function AddToDo(){
-    console.log(toDoName, date.toLocaleString());
-    setToDoNames([...toDoNames, toDoName]);
-    setToDoDates([...toDoDates, date.toLocaleString()]);
-    
-    
+    setToDoList([...toDoList, {name: toDoName, dueDate: date.toLocaleDateString()}])
+    setDate(new Date());
+    setToDoName(null);
   }
+
+  {/*Completing a To Do*/}
+  function completeToDo(index) {
+  let toDoCopy = [...toDoList];
+  toDoCopy.splice(index, 1);
+  setToDoList(toDoCopy);
+  }
+
   
 
 
   return (
     <View style={styles.container}>
       <View style={styles.toDoWrapper}>
-      
+        <Text style={styles.sectionTitle}>Today's Tasks</Text>
+        <View style={styles.items}>
+          {
+            toDoList.map((toDo, index) =>{
+              return (
+                <Pressable key={index} onPress={() => completeToDo(index)}> 
+                  <ToDoObject  name={toDo.name} date={toDo.dueDate}/>
+                </Pressable>
+              )
+            })
+          }
+
+
+        </View>
+        
       </View>
 
       <Modal
@@ -95,7 +116,7 @@ export default function ToDoList() {
       </Modal>
 
       <View style={styles.AddToDoToListContainer}>
-        <Pressable onPress={() => {setModalVisible(!modalVisible); }} >
+        <Pressable onPress={() => {setModalVisible(!modalVisible); console.log(toDoList) }} >
           <Text style ={styles.addToDoButtonText}>Add To Do</Text>
         </Pressable>
       </View>
@@ -112,8 +133,12 @@ const styles = StyleSheet.create({
   },
 
   toDoWrapper: {
-    paddingTop: 80,
+    paddingTop: 20,
     paddingHorizontal: 20,
+  },
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
   },
 
   items: {
