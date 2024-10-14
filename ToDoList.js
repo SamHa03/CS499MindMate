@@ -6,13 +6,13 @@ import ToDoObject from './components/ToDoObject';
 
 export default function ToDoList() {
   
-  {/* To Do Test */}
+  {/* To Do Array holds both the name and the due date for the To Do */}
   const [toDoList, setToDoList] = useState([]);
 
-  {/* To Do Name */}
+  {/* To Do Name state*/}
   const [toDoName, setToDoName] = useState();
   
-  {/*Date picking for each To Do*/}
+  {/*To Do due date state*/}
   const [date, setDate] = useState(new Date());
   
   {/*Bringing up the Add New To Do */}
@@ -25,31 +25,32 @@ export default function ToDoList() {
 
   {/*Creating a new To Do*/}
   function AddToDo(){
-    setToDoList([...toDoList, {name: toDoName, dueDate: date.toLocaleDateString()}])
+    setToDoList([...toDoList, {name: toDoName, dueDate: date.toLocaleDateString()}]); //Adds Name and Due Date to the array
     setDate(new Date());
     setToDoName(null);
   }
 
-  {/*Completing a To Do*/}
+  {/*Completing a To Do
+    splices a To Do from the array at the given index.
+    */}
   function completeToDo(index) {
   let toDoCopy = [...toDoList];
   toDoCopy.splice(index, 1);
   setToDoList(toDoCopy);
   }
 
-  
-
-
   return (
     <View style={styles.container}>
       <View style={styles.toDoWrapper}>
         <Text style={styles.sectionTitle}>Today's Tasks</Text>
         <View style={styles.items}>
+          {/*Iterates the toDoList taking the name and the Due date to create the To do */}
           {
             toDoList.map((toDo, index) =>{
               return (
-                <Pressable key={index} onPress={() => completeToDo(index)}> 
-                  <ToDoObject  name={toDo.name} date={toDo.dueDate}/>
+                
+                <Pressable key={index} onPress={() => completeToDo(index)}>
+                  <ToDoObject name={toDo.name} date={toDo.dueDate}/>
                 </Pressable>
               )
             })
@@ -59,7 +60,8 @@ export default function ToDoList() {
         </View>
         
       </View>
-
+      
+      {/*The the page for creating a new task */}
       <Modal
         animationType='slide'
         visible={modalVisible}
@@ -82,7 +84,6 @@ export default function ToDoList() {
           </View>
         </View>
 
-
         <Pressable>
         <View style={styles.ToDoOptionWrapper}>
           <Text>Due Date: </Text>
@@ -102,8 +103,7 @@ export default function ToDoList() {
         </View>
         </Pressable>
 
-
-
+        {/*Done Button for finishing the task */}
         <View style={styles.DoneButtonContainer}>
         <Pressable
           onPress={() => {setModalVisible(!modalVisible); AddToDo(); }}
@@ -115,6 +115,7 @@ export default function ToDoList() {
         </View>
       </Modal>
 
+      {/*Pulls up the add To Do modal */}
       <View style={styles.AddToDoToListContainer}>
         <Pressable onPress={() => {setModalVisible(!modalVisible); console.log(toDoList) }} >
           <Text style ={styles.addToDoButtonText}>Add To Do</Text>
@@ -125,7 +126,7 @@ export default function ToDoList() {
   );
 }
 
-
+{/*Style sheets go below */}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
