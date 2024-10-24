@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Pressable } from "react-native";
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import ToDoList from "./ToDoList";
+import BreathingAction from "./BreathingAction";
 
 const Stack = createNativeStackNavigator();
 
@@ -13,10 +13,10 @@ function AppHomeScreen({ navigation }) {
       <Pressable
         onPress={() => {
           console.log("Button Pressed");
-          navigation.navigate("ToDoList");
+          navigation.navigate("BreathingAction");
         }}
       >
-        <Text style={styles.toDoListText}>Go to To Do list</Text>
+        <Text style={styles.BreathingActionText}>Go to Breathing Exercise</Text>
       </Pressable>
     </View>
   );
@@ -27,7 +27,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={AppHomeScreen} />
-        <Stack.Screen name="ToDoList" component={ToDoList} />
+        <Stack.Screen name="BreathingAction" component={BreathingAction} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  toDoListText: {
+  BreathingActionText: {
     alignItems: "center",
     justifyContent: "center",
     margin: 25,
