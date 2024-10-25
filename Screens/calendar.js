@@ -5,6 +5,7 @@ import { Calendar } from "react-native-calendars";
 function CalendarScreen() {
   return (
     <View style={styles.container}>
+      <View style={styles.circleBehind} /> 
       <Calendar
         style={styles.calStyling}
         // user can swipe to navigate through months or arrows
@@ -104,5 +105,16 @@ const styles = StyleSheet.create({
     padding: 50,
     fontSize: 18,
     justifyContent: "flex-end",
+  },
+  circleBehind: {
+    backgroundColor: '#d4c3b4', // Gold background color for the circle
+    width: 120,
+    height: 120,
+    borderRadius: 60, // Circle shape
+    position: 'absolute',
+    bottom: 5, // Makes it jut out above the bottom container
+    left: '50%', // Center the circle horizontally
+    transform: [{ translateX: -60 }], // Adjust positioning to center it properly
+    zIndex: 0, // Ensures the circle is behind the home button
   },
 });
