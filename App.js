@@ -6,8 +6,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 // screens
-import BreathingScreen from "./Screens/breathing";
-import timerScreen from "./Screens/timer";
+//import BreathingScreen from "./Screens/breathing"; // may need later
+import timerScreen from "./Screens/BreathingAction";
 import CalendarScreen from "./Screens/calendar";
 import TaskScreen from "./Screens/ToDoList";
 import UserScreen from "./Screens/profile";
