@@ -9,7 +9,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import BreathingScreen from "./Screens/breathing";
 import timerScreen from "./Screens/timer";
 import CalendarScreen from "./Screens/calendar";
-import TaskScreen from "./Screens/tasks";
+import TaskScreen from "./Screens/ToDoList";
 import UserScreen from "./Screens/profile";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
