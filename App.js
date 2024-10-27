@@ -1,20 +1,22 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+// Garrett Thrower 10/26/2024
+// Description: This is my attempt at the mood tracker page prototype.
+import React from 'react';
+import { SafeAreaView, StyleSheet, Alert } from 'react-native';
+import MoodLayout from './MindMateBranch_Garrett/components/MoodLayout';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+const App = () => {
+    return (
+        <SafeAreaView style={styles.safeArea}>
+            <MoodLayout/>
+        </SafeAreaView>
+    );
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#fff',
+    },
 });
+
+export default App;
