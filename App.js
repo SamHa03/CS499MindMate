@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60, // Circle shape
     position: 'absolute',
-    bottom: 5, // Makes it jut out above the bottom container
+    bottom: 0, // Makes it jut out above the bottom container
     left: '50%', // Center the circle horizontally
     transform: [{ translateX: -60 }], // Adjust positioning to center it properly
     zIndex: 0, // Ensures the circle is behind the home button

@@ -3,6 +3,7 @@ import { KeyboardAvoidingView, TextInput, Platform, StyleSheet, Text, View, Pres
 import {useHeaderHeight } from '@react-navigation/elements'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import ToDoObject from './components/ToDoObject';
+import { ScrollView } from 'react-native';
 
 export default function ToDoList() {
   
@@ -44,7 +45,7 @@ export default function ToDoList() {
       <View style={styles.circleBehind} />  
       <View style={styles.toDoWrapper}>
         <Text style={styles.sectionTitle}>Today's Tasks</Text>
-        <View style={styles.items}>
+        <ScrollView style={styles.items}>
           {/*Iterates the toDoList taking the name and the Due date to create the To do */}
           {
             toDoList.map((toDo, index) =>{
@@ -58,7 +59,7 @@ export default function ToDoList() {
           }
 
 
-        </View>
+        </ScrollView>
         
       </View>
       
@@ -142,10 +143,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: '#7b7167',
   },
 
   items: {
     marginTop: 30,
+    height: 440,
   },
 
   NewToDoTitle: {
@@ -185,13 +188,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 30
   },
-
   AddToDoToListContainer: {
     flex: 1,
     justifyContent: 'flex-end',
     padding: 50
   },
   addToDoButtonText: {
+    color: '#7b7167',
     fontWeight: 'bold',
     fontSize: 30,
     textAlign: 'center',
@@ -203,12 +206,12 @@ const styles = StyleSheet.create({
     marginTop:-10,
   },
   circleBehind: {
-    backgroundColor: '#d4c3b4', // Gold background color for the circle
+    backgroundColor: '#d4c3b4',
     width: 120,
     height: 120,
     borderRadius: 60, // Circle shape
     position: 'absolute',
-    bottom: 5, // Makes it jut out above the bottom container
+    bottom: 0, // Makes it jut out above the bottom container
     left: '50%', // Center the circle horizontally
     transform: [{ translateX: -60 }], // Adjust positioning to center it properly
     zIndex: 0, // Ensures the circle is behind the home button

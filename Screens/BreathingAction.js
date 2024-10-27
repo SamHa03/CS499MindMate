@@ -45,6 +45,7 @@ const BreathingAction = () => {
         setMessage("Breathe in"); //Sets the message to "Breath in"
         
         Animated.timing(scaleValue, { //Expands the circle over 4 seconds
+            color: '#7b7167',
             toValue: 2,
             duration: 4000,
             useNativeDriver: true,
@@ -59,6 +60,7 @@ const BreathingAction = () => {
         setTimeout(() => { //Circle shrinks, message changes
             setMessage("Breath Out");
             Animated.timing(scaleValue, {
+                color: '#7b7167',
                 toValue: 1,
                 duration: 8000,
                 useNativeDriver: true,
@@ -114,10 +116,11 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 50,
-        backgroundColor: 'blue',
+        backgroundColor: '#dce6b9',
         
     },
     timerText:{
+        color: '#7b7167',
         fontSize: 48,
         paddingBottom: 50,
     },
@@ -127,7 +130,7 @@ const styles = StyleSheet.create({
         height: 120,
         borderRadius: 60, // Circle shape
         position: 'absolute',
-        bottom: 5, // Makes it jut out above the bottom container
+        bottom: 0, // Makes it jut out above the bottom container
         left: '50%', // Center the circle horizontally
         transform: [{ translateX: -60 }], // Adjust positioning to center it properly
         zIndex: 0, // Ensures the circle is behind the home button
