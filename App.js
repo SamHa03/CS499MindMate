@@ -4,17 +4,20 @@ import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Image } from 'react-native';
 import { onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './FirebaseConfig';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { fetchUserData } from './FirestoreHelpers';
 
 // Import Screens
 import Login from './Screens/Login';
+import SetProfileScreen from './Screens/SetProfileScreen';
 import CalendarScreen from './Screens/calendar';
 import BreathingScreen from './Screens/breathing';
 import BreathingAction from './Screens/BreathingAction';
 import ProfileScreen from './Screens/profile';
+import EditProfileScreen from './Screens/EditProfile';
 import TaskScreen from './Screens/tasks';
 import TimerScreen from './Screens/timer';
 import ToDoListScreen from './Screens/ToDoList';
@@ -26,6 +29,25 @@ const InsideStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function InsideTabNavigator() {
+  const [profilePic, setProfilePic] = useState(null);
+
+  useEffect(() => {
+    // Fetch the user's profile data from Firestore
+    const fetchProfileData = async () => {
+      try {
+        const userId = FIREBASE_AUTH.currentUser?.uid;
+        if (userId) {
+          const userData = await fetchUserData(userId);
+          setProfilePic(userData?.profilePicture || null); // Set profile picture or null if not available
+        }
+      } catch (error) {
+        console.error("Error fetching profile picture:", error);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
+
   return (
     <Tab.Navigator
       initialRouteName="Calendar"
@@ -77,8 +99,24 @@ function InsideTabNavigator() {
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
+        initialParams={{ profilePic }}
         options={{
-          tabBarIcon: ({ color }) => <Ionicons name="person-circle-outline" color={color} size={35} />,
+          tabBarIcon: ({ color }) => (
+            profilePic ? (
+              <Image
+                source={{ uri: profilePic }}
+                style={{
+                  width: 35,
+                  height: 35,
+                  borderRadius: 17.5,
+                  borderWidth: 1,
+                  borderColor: color,
+                }}
+              />
+            ) : (
+              <Ionicons name="person-circle-outline" color={color} size={35} />
+            )
+          ),
         }}
       />
     </Tab.Navigator>
@@ -91,6 +129,7 @@ function InsideLayout() {
       <InsideStack.Screen name="Main" component={InsideTabNavigator} options={{ headerShown: false }} />
       <InsideStack.Screen name="BreathingAction" component={BreathingAction} />
       <InsideStack.Screen name="ToDoList" component={ToDoListScreen} />
+      <InsideStack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: "Edit Profile" }} />
       {/* Additional screens can be added here */}
     </InsideStack.Navigator>
   );
@@ -108,19 +147,9 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Login'>
-        {user ? (
-          <Stack.Screen
-            name="Inside"
-            component={InsideLayout}
-            options={{ headerShown: false }}
-          />
-        ) : (
-          <Stack.Screen
-            name="Login"
-            component={Login}
-            options={{ headerShown: false }}
-          />
-        )}
+        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+        <Stack.Screen name="SetProfile" component={SetProfileScreen} options={{ title: "Set Up Profile" }} />
+        <Stack.Screen name="Inside" component={InsideLayout} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
