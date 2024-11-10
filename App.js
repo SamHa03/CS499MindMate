@@ -42,6 +42,7 @@ export default function App() {
         updatedTasks[date] = [];
       }
       updatedTasks[date].push({ name, date, time });
+      console.log(updatedTasks);
       return updatedTasks;
     });
   };

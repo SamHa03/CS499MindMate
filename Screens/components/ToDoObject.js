@@ -19,7 +19,7 @@ const ToDoObject = (props) => {
         <View style={styles.circular}></View>
       </View>
     );
-  };
+};
 
 const styles = StyleSheet.create({
     item: {
