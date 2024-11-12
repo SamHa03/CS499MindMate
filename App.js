@@ -13,7 +13,6 @@ import TaskScreen from "./Screens/ToDoList";
 import UserScreen from "./Screens/profile";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 // ===============  functions ===============
@@ -41,15 +40,14 @@ export default function App() {
               backgroundColor: "#F2EEE9", // light tan
             },
             // tab bar icon styling
-            headerTintColor: "#D4E09B",
+            headerTintColor: "#D4E09B", // light green
             tabBarActiveTintColor: "#CBABD1", // lilac
-            tabBarInactiveTintColor: '#69655E', // gray
+            tabBarInactiveTintColor: '#F2EEE9', // light tan
             tabBarActiveBackgroundColor: "#D4C3B4", // medium tan
             tabBarInactiveBackgroundColor: "#D4C3B4", // medium tan
             tabBarStyle: {
               flexDirection: "row",
               justifyContent: "space-around",
-              padding: 0,
               borderTopWidth: 0,
               borderBottomWidth: 0,
               bottom: -30,
@@ -70,7 +68,7 @@ export default function App() {
             component={timerScreen}
             options={{
               tabBarIcon: ({ color, size }) => (
-                <Ionicons name="alarm-outline" color={"#F2EEE9"} size={35} />
+                <Ionicons name="alarm-outline" color={color} size={35} />
               ),
               tabBarShowLabel: false,
             }}
@@ -82,7 +80,7 @@ export default function App() {
             component={CalendarScreen}
             options={{
               tabBarIcon: ({ color, size }) => (
-                <Ionicons name="calendar-number-outline" color={"#F2EEE9"} size={35} />
+                <Ionicons name="calendar-number-outline" color={color} size={35} />
               ),
               tabBarShowLabel: false,
             }}
@@ -96,7 +94,7 @@ export default function App() {
               tabBarIcon: ({ color, size }) => (
                 <Ionicons
                   name="home"
-                  color={"#F2EEE9"}
+                  color={color}
                   size={70}
                   style= {{paddingBottom: 112}}
                 />
@@ -111,7 +109,7 @@ export default function App() {
             component={TaskScreen}
             options={{
               tabBarIcon: ({ color, size }) => (
-                <Ionicons name="add-circle-outline" color={"#F2EEE9"} size={35} />
+                <Ionicons name="add-circle-outline" color={color} size={35} />
               ),
               tabBarShowLabel: false,
             }}
@@ -125,7 +123,7 @@ export default function App() {
               tabBarIcon: ({ color, size }) => (
                 <Ionicons
                   name="person-circle-outline"
-                  color={"#F2EEE9"}
+                  color={color}
                   size={35}
                 />
               ),
@@ -139,20 +137,10 @@ export default function App() {
 }
 
 // =============== styles ===============
-// const styles = StyleSheet.create({
-//   container: {
-//     justifyContent: "flex-start",
-//     backgroundColor: "#F2EEE9",
-//     flex: 1,
-//     alignItems: "center",
-//     paddingBottom: -200,
-//   },
-// });
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'flex-end', // Align content to the bottom
     zIndex: 2,
     backgroundColor: "#F2EEE9",
   },
