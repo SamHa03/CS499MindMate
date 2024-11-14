@@ -3,15 +3,13 @@
 // Garrett Thrower 10/26/2024
 // Description: This is my attempt at the mood tracker page prototype.
 // libraries / dependencies to bring in
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, Alert } from "react-native";
 import * as React from "react";
 import { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React from 'react';
-import { SafeAreaView, StyleSheet, Alert } from 'react-native';
-import MoodLayout from './MindMateBranch_Garrett/components/MoodLayout';
+import MoodLayout from './Screens/MindMateBranch_Garrett/components/MoodLayout';
 
 // screens
 // import BreathingScreen from "./Screens/breathing"; // may need later
@@ -26,21 +24,8 @@ const Tab = createBottomTabNavigator();
 
 // =============== functions ===============
 function AppHomeScreen({}) {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <View style={styles.circleBehind} />
-        <SafeAreaView style={styles.safeArea}>
-            <MoodLayout/>
-        </SafeAreaView>
-    </View>
-  );
-}
-
-// =============== main begins here ===============
-export default function App() {
-  // *** Added tasks state and functions ***
-  const [tasks, setTasks] = useState({});
+    // *** Added tasks state and functions ***
+    const [tasks, setTasks] = useState({});
 
   // function to add a new task
   const addTask = (date, time, name) => {
@@ -67,8 +52,20 @@ export default function App() {
 
   const currentDate = new Date().toLocaleDateString("en-CA");
   const todayTasks = tasks[currentDate] || [];
-  
 
+  return (
+    <View style={styles.container}>
+      <Text>Open up App.js to start working on your app!</Text>
+      <View style={styles.circleBehind} />
+        <SafeAreaView style={styles.safeArea}>
+            <MoodLayout/>
+        </SafeAreaView>
+    </View>
+  );
+}
+
+// =============== main begins here ===============
+export default function App() {
   return (
     <View style={{ flex: 1, backgroundColor: "#F2EEE9" }}>
       <NavigationContainer>
@@ -241,4 +238,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+
