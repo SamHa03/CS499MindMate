@@ -1,5 +1,7 @@
 // App.js
 
+// Garrett Thrower 10/26/2024
+// Description: This is my attempt at the mood tracker page prototype.
 // libraries / dependencies to bring in
 import { StyleSheet, Text, View } from "react-native";
 import * as React from "react";
@@ -7,6 +9,9 @@ import { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import React from 'react';
+import { SafeAreaView, StyleSheet, Alert } from 'react-native';
+import MoodLayout from './MindMateBranch_Garrett/components/MoodLayout';
 
 // screens
 // import BreathingScreen from "./Screens/breathing"; // may need later
@@ -25,6 +30,9 @@ function AppHomeScreen({}) {
     <View style={styles.container}>
       <Text>Open up App.js to start working on your app!</Text>
       <View style={styles.circleBehind} />
+        <SafeAreaView style={styles.safeArea}>
+            <MoodLayout/>
+        </SafeAreaView>
     </View>
   );
 }
@@ -184,6 +192,7 @@ export default function App() {
   );
 }
 
+
 // =============== styles ===============
 const styles = StyleSheet.create({
   container: {
@@ -231,3 +240,5 @@ const styles = StyleSheet.create({
     zIndex: 0, // Ensures the circle is behind the home button
   },
 });
+
+export default App;
