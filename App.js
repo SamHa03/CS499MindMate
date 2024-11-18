@@ -147,7 +147,7 @@ export default function App() {
               tabBarShowLabel: false,
             }}
           />
-
+          
           {/* ========== Edit Tasks Navigation ========== */}
           <Tab.Screen
             name="Task List"
@@ -167,7 +167,7 @@ export default function App() {
               />
             )}
           </Tab.Screen>
-
+          
           {/* ========== User Profile Navigation ========== */}
           <Tab.Screen
             name="User Profile"
