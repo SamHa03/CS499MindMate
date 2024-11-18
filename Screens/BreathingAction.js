@@ -12,7 +12,7 @@ const BreathingAction = () => {
     const [message, setMessage] = useState("Press the Circle to Begin"); // Breath in, hold and out variable
     const [colorOfCircle, setColorOfCircle] = useState("#F19C79"); //Color that the circle changes to 
 
-    const[time, setTime] = useState(0); //Time that shows for what section the breathing exercise is on
+    const[time, setTime] = useState(1); //Time that shows for what section the breathing exercise is on
     const[isRunning, setIsRunning] = useState(false); //Toggle if the timer is running or not
     const[showTime, setShowTime] = useState(0); //Time that is actually shown to the user
 
@@ -31,8 +31,7 @@ const BreathingAction = () => {
         if (isRunning) {
             interval = setInterval(() =>{
                 setTime((prevTime) => prevTime + 1); //increments the main time
-                if (time == 1){ //Sets the breath in text and begins the animation
-                    setMessage("Breathe in");
+                if (time == 1){ //Begins the animation
                     BreathIn();
                 }
                 else if (time == 4){ //Animation does nothing while text changes and changes the color of the circle
@@ -94,6 +93,7 @@ const BreathingAction = () => {
             {/*Cirlce that expands is also a pressable*/}
             <Pressable disabled={breathingButtonToggle} onPress={() => {
                 setBreathingButtonToggle(true); //Disables pressable
+                setMessage("Breathe in");
                 setIsRunning(true); //Starts the timer
                 addToHistory(); //Adds the session to the array
                 }}>
