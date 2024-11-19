@@ -108,6 +108,8 @@ export default function App() {
             }}
           />
 
+          
+          {/* ========== Edit Tasks Navigation ========== */}
           <Tab.Screen
             name="Task List"
             component={TaskScreen}
@@ -132,6 +134,8 @@ export default function App() {
             )} */}
           </Tab.Screen>
 
+          
+          {/* ========== User Profile Navigation ========== */}
           <Tab.Screen
             name="User Profile"
             component={UserScreen}

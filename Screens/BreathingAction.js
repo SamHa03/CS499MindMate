@@ -1,14 +1,15 @@
+import { isRunningInExpoGo } from "expo";
 import React, {useEffect, useRef, useState } from "react";
 import { Animated, Text, View, StyleSheet, Pressable} from 'react-native';
 
 const BreathingAction = () => {
-    const scaleValue = useRef(new Animated.Value(1)).current; //Opacity used for the animation
+    const scaleValue = useRef(new Animated.Value(1)).current; //Transform Value used for the animation
 
     const [breathingHistory, setBreathingHistory] = useState([]); //Breathing history array
 
     const [breathingButtonToggle, setBreathingButtonToggle] = useState(false); //Toggle that decides whether the breathing excersice button is pressable
 
-    const [message, setMessage] = useState(""); // Breath in, hold and out variable
+    const [message, setMessage] = useState("Press the Circle to Begin"); // Breath in, hold and out variable
     const [colorOfCircle, setColorOfCircle] = useState("#F19C79"); //Color that the circle changes to 
 
     const[time, setTime] = useState(0); //Time that shows for what section the breathing exercise is on
@@ -21,8 +22,9 @@ const BreathingAction = () => {
             {date: new Date().toLocaleDateString(), time: new Date().toLocaleTimeString()}]);
     }
 
-    /* effect that waits for the change of isRunning for true.
-    If true then it starts the timer. If false it stops the timer and resets time to 1;
+    /* 
+    Main driver of breathing action. Checks with a non-showing timer to see if the showing timer needs to be reset. 
+    Then calls each part of the animation that deals with increasing and shrinking the circle. 
     */
     useEffect(() => {
         let interval;
@@ -86,29 +88,28 @@ const BreathingAction = () => {
         }).start();
     };
 
+
     return (
         <View style={styles.container}>
-            <Text style={styles.timerText}>{showTime}</Text>
+            <Text style={[styles.messageText]}>{message}</Text> 
             <View style={styles.circleBehind} />  
 
             {/*Message that shows In, Hold, and out messages*/}
-            <Text>{message}</Text> 
-
-            {/*Shows the timer*/}
-            <Text style={styles.timerText}>{time}</Text>
             
+
             {/*Cirlce that expands is also a pressable*/}
             <Pressable disabled={breathingButtonToggle} onPress={() => {
                 setBreathingButtonToggle(true); //Disables pressable
                 setIsRunning(true); //Starts the timer
-                BreathingCircleAnimation(); //Begins the animation
                 addToHistory(); //Adds the session to the array
                 }}>
                 <Animated.View //Animated view that allows for the transformation of the circle
+                backgroundColor={colorOfCircle} //Sets the color of the circle
                 style={[
                     styles.circle,
                     {transform: [{scale: scaleValue}]}
-                ]}
+                ]
+                }
                 />
                 <Text style={styles.timerText}>{showTime}</Text>
             </Pressable>
@@ -128,12 +129,19 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 50,
-        backgroundColor: 'blue',
-        
     },
     timerText:{
         fontSize: 48,
         paddingBottom: 50,
+        position: 'absolute',
+        color: '#F2EEE9',
+        left: 38,
+        top: 20,
+    },
+    messageText:{
+        bottom: 150,
+        fontSize: 35,
+        color: "#a7bed3",
     },
     circleBehind: {
         backgroundColor: '#d4c3b4', // Gold background color for the circle
