@@ -32,8 +32,8 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        backgroundColor: '#f9f9f9',
-        paddingVertical: 10,
+        backgroundColor: '#F2EEE9',
+        paddingVertical: 100,
         width: '100%',
     },
     circle: {
