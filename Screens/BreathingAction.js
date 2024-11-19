@@ -63,6 +63,12 @@ const BreathingAction = () => {
         return () => clearInterval(interval);
     }, [isRunning, time]);
 
+    //Animation steps for the circle expanding and shrinking
+    //Since the function executes everthing at once without waiting for the timeout 
+    //  of the previous stage to finish the different stages run after waiting for 
+    //  a combined time of all of the previous stages.
+    //For example the "Hold your breath stage" executes after 4 seconds of waiting rather than
+    //  until for timeing to finish.
     //Animation for expanding the circle
     const BreathIn = () => {
         Animated.timing(scaleValue, { //Expands the circle over 4 seconds
@@ -105,7 +111,6 @@ const BreathingAction = () => {
                 ]
                 }
                 />
-                {/*Shows the timer*/}
                 <Text style={styles.timerText}>{showTime}</Text>
             </Pressable>
         

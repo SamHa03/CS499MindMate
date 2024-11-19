@@ -1,51 +1,36 @@
 // App.js
-
-// Garrett Thrower 10/26/2024
-// Description: This is my attempt at the mood tracker page prototype.
-// libraries / dependencies to bring in
-import { StyleSheet, Text, View, SafeAreaView, Alert } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView } from "react-native";
 import * as React from "react";
 import { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import MoodLayout from './Screens/MindMateBranch_Garrett/components/MoodLayout';
-
-// screens
-// import BreathingScreen from "./Screens/breathing"; // may need later
-import timerScreen from "./Screens/BreathingAction";
+import MoodLayout from "./Screens/MindMateBranch_Garrett/components/MoodLayout";
+import timerScreen from "./Screens/breathing";
 import CalendarScreen from "./Screens/calendar";
 import TaskScreen from "./Screens/ToDoList";
 import UserScreen from "./Screens/profile";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// =============== functions ===============
 function AppHomeScreen({}) {
-    // *** Added tasks state and functions ***
-    const [tasks, setTasks] = useState({});
-
-  // function to add a new task
+  const [tasks, setTasks] = useState({});
   const addTask = (date, time, name) => {
-    setTasks(prevTasks => {
+    console.log("Type of date:", typeof date, "| Value:", date);
+    console.log("Type of time:", typeof time, "| Value:", time);
+    console.log("Type of name:", typeof name, "| Value:", name);
+    setTasks((prevTasks) => {
       const updatedTasks = { ...prevTasks };
-      if (!updatedTasks[date]) {
-        updatedTasks[date] = [];
-      }
+      if (!updatedTasks[date]) updatedTasks[date] = [];
       updatedTasks[date].push({ name, date, time });
       return updatedTasks;
     });
   };
 
-  // function to remove a task
   const removeTask = (date, index) => {
-    setTasks(prevTasks => {
+    setTasks((prevTasks) => {
       const updatedTasks = { ...prevTasks };
-      if (updatedTasks[date]) {
-        updatedTasks[date].splice(index, 1);
-      }
+      if (updatedTasks[date]) updatedTasks[date].splice(index, 1);
       return updatedTasks;
     });
   };
@@ -55,51 +40,49 @@ function AppHomeScreen({}) {
 
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <View style={styles.circleBehind} />
-        <SafeAreaView style={styles.safeArea}>
-            <MoodLayout/>
-        </SafeAreaView>
+      <Text>Welcome to the Calendar!</Text>
+      <CalendarScreen tasks={tasks} removeTask={removeTask} />
     </View>
   );
 }
 
-// =============== main begins here ===============
 export default function App() {
   return (
     <View style={{ flex: 1, backgroundColor: "#F2EEE9" }}>
       <NavigationContainer>
         <Tab.Navigator
-          // always default to home / app startup page
-          initialRouteName="Home"
+          initialRouteName="Calendar" // set calendar as the default
           screenOptions={{
-            headerStyle: {
-              backgroundColor: "#F2EEE9", // light tan
-            },
-            // tab bar icon styling
+            headerStyle: { backgroundColor: "#F2EEE9" },
             headerTintColor: "#D4E09B",
-            tabBarActiveTintColor: "#CBABD1", // lilac
-            tabBarInactiveTintColor: "#69655E", // gray
-            tabBarActiveBackgroundColor: "#D4C3B4", // medium tan
-            tabBarInactiveBackgroundColor: "#D4C3B4", // medium tan
+            tabBarActiveTintColor: "#CBABD1",
+            tabBarInactiveTintColor: "#69655E",
+            tabBarActiveBackgroundColor: "#D4C3B4",
+            tabBarInactiveBackgroundColor: "#D4C3B4",
             tabBarStyle: {
               flexDirection: "row",
               justifyContent: "space-around",
               padding: 0,
               borderTopWidth: 0,
-              borderBottomWidth: 0,
-              bottom: -30,
               height: 100,
+              bottom: -30,
               position: "absolute",
               zIndex: 1,
             },
-            tabBarIconStyle: {
-              marginTop: 0,
-              marginBottom: 15,
-            },
+            tabBarIconStyle: { marginTop: 0, marginBottom: 15 },
           }}
         >
-          {/* ========== Focus Timer / Pomodoro Timer Navigation ========== */}
+          <Tab.Screen
+            name="Mood Tracker"
+            component={MoodLayout} // Move MoodLayout to its own tab
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="happy-outline" color={"#F2EEE9"} size={35} />
+              ),
+              tabBarShowLabel: false,
+            }}
+          />
+
           <Tab.Screen
             name="Timer"
             component={timerScreen}
@@ -110,63 +93,47 @@ export default function App() {
               tabBarShowLabel: false,
             }}
           />
-
-          {/* ========== Calendar Navigation ========== */}
           <Tab.Screen
             name="Calendar"
-            options={{
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="calendar-number-outline" color={"#F2EEE9"} size={35} />
-              ),
-              tabBarShowLabel: false,
-            }}
-          >
-            {/* Pass tasks and removeTask function to CalendarScreen */}
-            {(props) => (
-              <CalendarScreen
-                {...props}
-                tasks={tasks}
-                removeTask={removeTask}
-              />
-            )}
-          </Tab.Screen>
-
-          {/* ========== Home Navigation ========== */}
-          <Tab.Screen
-            name="Home"
-            component={AppHomeScreen}
+            component={AppHomeScreen} // display Calendar on the Home page
             options={{
               tabBarIcon: ({ color, size }) => (
                 <Ionicons
-                  name="home"
+                  name="calendar-number-outline"
                   color={"#F2EEE9"}
-                  size={70}
-                  style={{ paddingBottom: 112 }}
+                  size={35}
                 />
               ),
               tabBarShowLabel: false,
             }}
           />
+
           
           {/* ========== Edit Tasks Navigation ========== */}
           <Tab.Screen
             name="Task List"
+            component={TaskScreen}
             options={{
               tabBarIcon: ({ color, size }) => (
-                <Ionicons name="add-circle-outline" color={"#F2EEE9"} size={35} />
+                <Ionicons
+                  name="add-circle-outline"
+                  color={"#F2EEE9"}
+                  size={35}
+                />
               ),
               tabBarShowLabel: false,
             }}
           >
-            {(props) => (
+            {/* {(props) => (
               <TaskScreen
                 {...props}
                 addTask={addTask}
                 tasks={todayTasks}
                 removeTask={removeTask}
               />
-            )}
+            )} */}
           </Tab.Screen>
+
           
           {/* ========== User Profile Navigation ========== */}
           <Tab.Screen
@@ -189,53 +156,21 @@ export default function App() {
   );
 }
 
-
-// =============== styles ===============
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     zIndex: 2,
     backgroundColor: "#F2EEE9",
   },
-  bottomContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    padding: 15,
-    backgroundColor: "#d4c3b4",
-  },
-  sideButton: {
-    backgroundColor: "#f2eee9",
-    width: 65,
-    height: 65,
-    bottom: 10,
-    borderRadius: 35, // Circle shape
-    justifyContent: "center",
-    alignItems: "center",
-    margin: 5,
-    verticalAlign: "center",
-  },
-  homeButton: {
-    backgroundColor: "#f2eee9",
-    width: 90,
-    height: 90,
-    bottom: 30,
-    borderRadius: 45, // Bigger circle for Home button
-    justifyContent: "center",
-    alignItems: "center",
-    verticalAlign: "center",
-    zIndex: 2,
-  },
   circleBehind: {
-    backgroundColor: "#d4c3b4", // Gold background color for the circle
+    backgroundColor: "#d4c3b4",
     width: 120,
     height: 120,
-    borderRadius: 60, // Circle shape
+    borderRadius: 60,
     position: "absolute",
-    bottom: 5, // Makes it jut out above the bottom container
-    left: "50%", // Center the circle horizontally
-    transform: [{ translateX: -60 }], // Adjust positioning to center it properly
-    zIndex: 0, // Ensures the circle is behind the home button
+    bottom: 5,
+    left: "50%",
+    transform: [{ translateX: -60 }],
+    zIndex: 0,
   },
 });
-
-
