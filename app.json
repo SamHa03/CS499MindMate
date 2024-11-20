@@ -6,6 +6,8 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "sdkVersion": "52.0.0",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -23,5 +25,8 @@
     "web": {
       "favicon": "./assets/favicon.png"
     }
+
+    }
+    
   }
-}
+

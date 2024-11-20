@@ -1,43 +1,109 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { Calendar } from "react-native-calendars";
+// CalendarScreen.js
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { Calendar } from 'react-native-calendars';
 
-function CalendarScreen() {
+const CalendarScreen = () => {
   return (
     <View style={styles.container}>
-      <View style={styles.circleBehind} /> 
-      <Calendar
-        style={styles.calStyling}
-        // user can swipe to navigate through months or arrows
-        enableSwipeMonths
-        // styling for calendar and days
-        theme={{
-          monthTextColor: "#69655E",
-          textMonthFontSize: 30,
-          textMonthFontWeight: "thin",
-          arrowColor: "#69655E",
-          calendarBackground: "#F2EEE9",
-          dayTextColor: "#AFBFAA", //green
-          textInactiveColor: "#69655E",
-          textSectionTitleColor: "#69655E",
-          textDayHeaderFontWeight: "bold",
-          textDayFontWeight: "bold",
-          textDisabledColor: "#D4C3B4",
-        }}
-      />
-      <Text style={styles.taskHeaderText}>
-        {/* this is a hard coded placeholder */}
-        Today's Tasks:
-      </Text>
-      {/* scroll view allows user to scroll to see all tasks in task list */}
-      <ScrollView>
-        {/* These are placeholders for when we connect up the to-dos */}
-        <Text style={styles.testTask1}> eat breakfast</Text>
-        <Text style={styles.testTask2}> run 1 mile</Text>
-      </ScrollView>
+      <Text style={styles.text}>Calendar Screen placeholder.</Text>
     </View>
   );
-}
+};
+
+
+// from Garrett: modified the CalendarScreen component to display tasks for each day
+// and allow the user to select a date to view tasks for that day.
+// also added some small styling things like a circle behind the selected date on the calendar
+// as well as red dots to indicate tasks for each day
+// function CalendarScreen({ tasks, removeTask }) {
+
+//   // set the current date as the selected date
+//   const currentDate = new Date().toLocaleDateString('en-CA');
+  
+//   // create a useState hook to store the selected date
+//   const [selectedDate, setSelectedDate] = useState(currentDate);
+
+//   // create a useState hook to store the selected tasks
+//   const [selectedTasks, setSelectedTasks] = useState(tasks[currentDate] || []);
+
+//   // function to set the selected date to the date that was pressed on the calendar by the user
+//   useEffect(() => {
+//     setSelectedTasks(tasks[selectedDate] || []);
+//   }, [tasks, selectedDate]);
+
+//   const onDayPress = (day) => {
+//     setSelectedDate(day.dateString);
+//   };
+
+//   // function to complete a task
+//   function completeTask(index) {
+//     removeTask(selectedDate, index);
+//   }
+
+//   // generates red dots for the calendar based on the tasks for each day
+//   const dotsMarkedDates = {};
+//   Object.keys(tasks).forEach((date) => {
+//     if (tasks[date].length > 0) {
+//       dotsMarkedDates[date] = {
+//         dots: tasks[date].slice(0, 3).map((task, index) => ({
+//           key: index,
+//           color: '#e65151',
+//         })),
+//         markingType: 'multi-dot',
+//       };
+//     }
+//   });
+
+//   // move a blue dot to the selected date
+//   dotsMarkedDates[selectedDate] = {
+//     ...(dotsMarkedDates[selectedDate] || {}),
+//     selected: true,
+//     selectedColor: '#4acfc9',
+//   };
+
+//   return (
+//     <View style={styles.container}>
+//       <View style={styles.circleBehind} />
+//       <Calendar
+//         style={styles.calStyling}
+//         enableSwipeMonths
+//         theme={{
+//           monthTextColor: "#69655E",
+//           textMonthFontSize: 30,
+//           textMonthFontWeight: "thin",
+//           arrowColor: "#69655E",
+//           calendarBackground: "#F2EEE9",
+//           dayTextColor: "#AFBFAA",
+//           textInactiveColor: "#69655E",
+//           textSectionTitleColor: "#69655E",
+//           textDayHeaderFontWeight: "bold",
+//           textDayFontWeight: "bold",
+//           textDisabledColor: "#D4C3B4",
+//           todayTextColor: "#4acfc9",
+//         }}
+//         markedDates={dotsMarkedDates}
+//         markingType={'multi-dot'}
+//         onDayPress={onDayPress}
+//       />
+//       {/* display tasks for the selected date, otherwise display a placeholder */}
+//       <Text style={styles.taskHeaderText}>
+//         Tasks for {selectedDate}:
+//       </Text>
+//       <ScrollView>
+//         {selectedTasks.length > 0 ? (
+//           selectedTasks.map((task, index) => (
+//             <Pressable key={index} onPress={() => completeTask(index)}>
+//               <Text style={styles.taskText}>{task.name}</Text>
+//             </Pressable>
+//           ))
+//         ) : (
+//           <Text style={styles.noTaskText}>No tasks for this date</Text>
+//         )}
+//       </ScrollView>
+//     </View>
+//   );
+// }
 
 export default CalendarScreen;
 
@@ -70,7 +136,7 @@ const styles = StyleSheet.create({
     color: "#69655E",
     textDecorationLine: "underline",
   },
-  testTask1: {
+  taskText: {
     alignSelf: "center",
     backgroundColor: "#D4E09B",
     margin: 10,
@@ -83,7 +149,7 @@ const styles = StyleSheet.create({
     minWidth: 300,
     textAlign: "center",
   },
-  testTask2: {
+  noTaskText: {
     alignSelf: "center",
     backgroundColor: "#CBABD1",
     margin: 10,
@@ -115,6 +181,6 @@ const styles = StyleSheet.create({
     bottom: 5, // Makes it jut out above the bottom container
     left: '50%', // Center the circle horizontally
     transform: [{ translateX: -60 }], // Adjust positioning to center it properly
-    zIndex: 0, // Ensures the circle is behind the home button
+    zIndex: 1, // Ensures the circle is behind the home button (edited by garrett: the circle was behind tasks when scrolling)
   },
 });

@@ -1,130 +1,127 @@
-import React, {useState} from 'react';
-import { KeyboardAvoidingView, TextInput, Platform, StyleSheet, Text, View, Pressable, Modal, Button } from 'react-native';
-import {useHeaderHeight } from '@react-navigation/elements'
+// TaskScreen.js (ToDoList component)
+import React, { useState } from 'react';
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  Text,
+  Pressable,
+  Modal,
+  KeyboardAvoidingView,
+} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import ToDoObject from './components/ToDoObject';
 
-export default function ToDoList() {
-  
-  {/* To Do Array holds both the name and the due date for the To Do */}
-  const [toDoList, setToDoList] = useState([]);
+export default function TaskScreen({ addTask, tasks, removeTask }) {
 
-  {/* To Do Name state*/}
-  const [toDoName, setToDoName] = useState();
-  
-  {/*To Do due date state*/}
+  {/* toDoName is the name of the task, setToDoName is the function to set the name of the task */}
+  const [toDoName, setToDoName] = useState('');
+
+  {/* date is the date of the task, setDate is the function to set the date of the task */}
   const [date, setDate] = useState(new Date());
   
-  {/*Bringing up the Add New To Do */}
+  {/* Bringing up the Add New To Do */}
   const [modalVisible, setModalVisible] = useState(false);
 
   {/* Date Picker Functions */}
-  const onChange =(e, selectedDate) => {
-    setDate(selectedDate);
+  const onChange = (e, selectedDate) => {
+    setDate(selectedDate || date);
   };
 
-  {/*Creating a new To Do*/}
-  function AddToDo(){
-    setToDoList([...toDoList, {name: toDoName, dueDate: date.toLocaleDateString()}]); //Adds Name and Due Date to the array
-    setDate(new Date());
-    setToDoName(null);
+  {/* Creating a new To Do */}
+  function AddToDo() {
+    const currentDate = date.toLocaleDateString('en-CA'); // format date as YYYY-MM-DD
+    const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    addTask(currentDate, timeString, toDoName);
+    setToDoName('');
+    setModalVisible(false);
   }
 
-  {/*Completing a To Do
-    splices a To Do from the array at the given index.
-    */}
+  {/* Completing a To Do */}
   function completeToDo(index) {
-  let toDoCopy = [...toDoList];
-  toDoCopy.splice(index, 1);
-  setToDoList(toDoCopy);
+    const currentDate = date.toLocaleDateString('en-CA'); // format date as YYYY-MM-DD
+    removeTask(currentDate, index);
   }
+  
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.circleBehind} />  
-      <View style={styles.toDoWrapper}>
-        <Text style={styles.sectionTitle}>Today's Tasks</Text>
-        <View style={styles.items}>
-          {/*Iterates the toDoList taking the name and the Due date to create the To do */}
-          {
-            toDoList.map((toDo, index) =>{
-              return (
-                
-                <Pressable key={index} onPress={() => completeToDo(index)}>
-                  <ToDoObject name={toDo.name} date={toDo.dueDate}/>
-                </Pressable>
-              )
-            })
-          }
+  // return (
+  //   <View style={styles.container}>
+  //     <View style={styles.circleBehind} />
+  //     <View style={styles.toDoWrapper}>
+  //       <Text style={styles.sectionTitle}>Today's Tasks</Text>
+  //       <View style={styles.items}>
+  //         {/* Display tasks for today */}
+  //         {
+  //         tasks.map(
+  //           (task, index) => (
+  //           <Pressable key={index} onPress={() => completeToDo(index)}>
+  //               <ToDoObject 
+  //               name={task.name} 
+  //               date={task.date} 
+  //               time={task.time} 
+  //             />
+  //           </Pressable>
+  //         )
+  //       )
+  //         }
+  //       </View>
+  //     </View>
 
+  //     {/* The the page for creating a new task */}
+  //     <Modal
+  //       animationType="slide"
+  //       visible={modalVisible}
+  //       onRequestClose={() => {
+  //         setModalVisible(false);
+  //       }}
+  //     >
+  //       <View>
+  //         <Text style={styles.NewToDoTitle}>New Task</Text>
+  //       </View>
 
-        </View>
-        
-      </View>
-      
-      {/*The the page for creating a new task */}
-      <Modal
-        animationType='slide'
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible)
-      }}>
-        <View >
-          <Text style={styles.NewToDoTitle}>New To Do</Text>
-        </View>
-        
-        <View style ={styles.ToDoOptionWrapper} >
-          <View><Text>Name: </Text></View>
-          <View>
-            <TextInput 
-            placeholderTextColor={'gray'} 
-            placeholder={'Name goes here'}
-            value={toDoName}
-            onChangeText={setToDoName}
-            />
-          </View>
-        </View>
+  //       <View style={styles.ToDoOptionWrapper}>
+  //         <Text>Name: </Text>
+  //         <TextInput
+  //         style={styles.TextInput}
+  //           placeholderTextColor={'gray'}
+  //           placeholder={'Name goes here'}
+  //           value={toDoName}
+  //           onChangeText={setToDoName}
+  //         />
+  //       </View>
 
-        <Pressable>
-        <View style={styles.ToDoOptionWrapper}>
-          <Text>Due Date: </Text>
-          <DateTimePicker
-            value={date}
-            mode={'date'}
-            is24Hour={true}
-            onChange={onChange}
-          />
-          <DateTimePicker
-            value={date}
-            mode={'time'}
-            is24Hour={true}
-            onChange={onChange}
-          />
-            
-        </View>
-        </Pressable>
+  //       <View style={styles.ToDoOptionWrapper}>
+  //         <Text>Due Date: </Text>
+  //         <DateTimePicker
+  //           value={date}
+  //           mode={'date'}
+  //           is24Hour={true}
+  //           onChange={onChange}
+  //         />
+  //         <DateTimePicker
+  //           value={date}
+  //           mode={'time'}
+  //           is24Hour={true}
+  //           onChange={onChange}
+  //         />
+  //       </View>
 
-        {/*Done Button for finishing the task */}
-        <View style={styles.DoneButtonContainer}>
-        <Pressable
-          onPress={() => {setModalVisible(!modalVisible); AddToDo(); }}
-          style = {styles.DoneButtonWrapper}
-          >
-            <Text style={styles.DoneButtonText}>Done</Text>
-        </Pressable>
+  //       {/* Done Button for finishing the task */}
+  //       <View style={styles.DoneButtonContainer}>
+  //         <Pressable onPress={AddToDo} style={styles.DoneButtonWrapper}>
+  //           <Text style={styles.DoneButtonText}>Done</Text>
+  //         </Pressable>
+  //       </View>
+  //     </Modal>
 
-        </View>
-      </Modal>
-
-      {/*Pulls up the add To Do modal */}
-      <View style={styles.AddToDoToListContainer}>
-        <Pressable onPress={() => {setModalVisible(!modalVisible); console.log(toDoList) }} >
-          <Text style ={styles.addToDoButtonText}>Add To Do</Text>
-        </Pressable>
-      </View>
-
-    </View>
-  );
+  //     {/*Pulls up the add To Do modal */}
+  //     <View style={styles.AddToDoToListContainer}>
+  //       <Pressable onPress={() => setModalVisible(true)}>
+  //         <Text style={styles.addToDoButtonText}>Add Task</Text>
+  //       </Pressable>
+  //     </View>
+  //   </View>
+  // );
 }
 
 {/*Style sheets go below */}
@@ -134,7 +131,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#F2EEE9',
     
   },
-
+  textInput: {
+    width: 250,
+    borderColor: '#C0C0C0',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 10,
+    backgroundColor: '#FFF',
+    textAlignVertical: 'top',
+  },
   toDoWrapper: {
     paddingTop: 20,
     paddingHorizontal: 20,
@@ -162,7 +167,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
     borderColor: '#C0C0C0',
     borderWidth: 1,
-    Width: 250,
+    width: 250,
     marginBottom: 5,
     flexDirection: 'row',
   },
