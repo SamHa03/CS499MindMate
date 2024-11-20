@@ -3,98 +3,107 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 
+const CalendarScreen = () => {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.text}>Calendar Screen placeholder.</Text>
+    </View>
+  );
+};
+
+
 // from Garrett: modified the CalendarScreen component to display tasks for each day
 // and allow the user to select a date to view tasks for that day.
 // also added some small styling things like a circle behind the selected date on the calendar
 // as well as red dots to indicate tasks for each day
-function CalendarScreen({ tasks, removeTask }) {
+// function CalendarScreen({ tasks, removeTask }) {
 
-  // set the current date as the selected date
-  const currentDate = new Date().toLocaleDateString('en-CA');
+//   // set the current date as the selected date
+//   const currentDate = new Date().toLocaleDateString('en-CA');
   
-  // create a useState hook to store the selected date
-  const [selectedDate, setSelectedDate] = useState(currentDate);
+//   // create a useState hook to store the selected date
+//   const [selectedDate, setSelectedDate] = useState(currentDate);
 
-  // create a useState hook to store the selected tasks
-  const [selectedTasks, setSelectedTasks] = useState(tasks[currentDate] || []);
+//   // create a useState hook to store the selected tasks
+//   const [selectedTasks, setSelectedTasks] = useState(tasks[currentDate] || []);
 
-  // function to set the selected date to the date that was pressed on the calendar by the user
-  useEffect(() => {
-    setSelectedTasks(tasks[selectedDate] || []);
-  }, [tasks, selectedDate]);
+//   // function to set the selected date to the date that was pressed on the calendar by the user
+//   useEffect(() => {
+//     setSelectedTasks(tasks[selectedDate] || []);
+//   }, [tasks, selectedDate]);
 
-  const onDayPress = (day) => {
-    setSelectedDate(day.dateString);
-  };
+//   const onDayPress = (day) => {
+//     setSelectedDate(day.dateString);
+//   };
 
-  // function to complete a task
-  function completeTask(index) {
-    removeTask(selectedDate, index);
-  }
+//   // function to complete a task
+//   function completeTask(index) {
+//     removeTask(selectedDate, index);
+//   }
 
-  // generates red dots for the calendar based on the tasks for each day
-  const dotsMarkedDates = {};
-  Object.keys(tasks).forEach((date) => {
-    if (tasks[date].length > 0) {
-      dotsMarkedDates[date] = {
-        dots: tasks[date].slice(0, 3).map((task, index) => ({
-          key: index,
-          color: '#e65151',
-        })),
-        markingType: 'multi-dot',
-      };
-    }
-  });
+//   // generates red dots for the calendar based on the tasks for each day
+//   const dotsMarkedDates = {};
+//   Object.keys(tasks).forEach((date) => {
+//     if (tasks[date].length > 0) {
+//       dotsMarkedDates[date] = {
+//         dots: tasks[date].slice(0, 3).map((task, index) => ({
+//           key: index,
+//           color: '#e65151',
+//         })),
+//         markingType: 'multi-dot',
+//       };
+//     }
+//   });
 
-  // move a blue dot to the selected date
-  dotsMarkedDates[selectedDate] = {
-    ...(dotsMarkedDates[selectedDate] || {}),
-    selected: true,
-    selectedColor: '#4acfc9',
-  };
+//   // move a blue dot to the selected date
+//   dotsMarkedDates[selectedDate] = {
+//     ...(dotsMarkedDates[selectedDate] || {}),
+//     selected: true,
+//     selectedColor: '#4acfc9',
+//   };
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.circleBehind} />
-      <Calendar
-        style={styles.calStyling}
-        enableSwipeMonths
-        theme={{
-          monthTextColor: "#69655E",
-          textMonthFontSize: 30,
-          textMonthFontWeight: "thin",
-          arrowColor: "#69655E",
-          calendarBackground: "#F2EEE9",
-          dayTextColor: "#AFBFAA",
-          textInactiveColor: "#69655E",
-          textSectionTitleColor: "#69655E",
-          textDayHeaderFontWeight: "bold",
-          textDayFontWeight: "bold",
-          textDisabledColor: "#D4C3B4",
-          todayTextColor: "#4acfc9",
-        }}
-        markedDates={dotsMarkedDates}
-        markingType={'multi-dot'}
-        onDayPress={onDayPress}
-      />
-      {/* display tasks for the selected date, otherwise display a placeholder */}
-      <Text style={styles.taskHeaderText}>
-        Tasks for {selectedDate}:
-      </Text>
-      <ScrollView>
-        {selectedTasks.length > 0 ? (
-          selectedTasks.map((task, index) => (
-            <Pressable key={index} onPress={() => completeTask(index)}>
-              <Text style={styles.taskText}>{task.name}</Text>
-            </Pressable>
-          ))
-        ) : (
-          <Text style={styles.noTaskText}>No tasks for this date</Text>
-        )}
-      </ScrollView>
-    </View>
-  );
-}
+//   return (
+//     <View style={styles.container}>
+//       <View style={styles.circleBehind} />
+//       <Calendar
+//         style={styles.calStyling}
+//         enableSwipeMonths
+//         theme={{
+//           monthTextColor: "#69655E",
+//           textMonthFontSize: 30,
+//           textMonthFontWeight: "thin",
+//           arrowColor: "#69655E",
+//           calendarBackground: "#F2EEE9",
+//           dayTextColor: "#AFBFAA",
+//           textInactiveColor: "#69655E",
+//           textSectionTitleColor: "#69655E",
+//           textDayHeaderFontWeight: "bold",
+//           textDayFontWeight: "bold",
+//           textDisabledColor: "#D4C3B4",
+//           todayTextColor: "#4acfc9",
+//         }}
+//         markedDates={dotsMarkedDates}
+//         markingType={'multi-dot'}
+//         onDayPress={onDayPress}
+//       />
+//       {/* display tasks for the selected date, otherwise display a placeholder */}
+//       <Text style={styles.taskHeaderText}>
+//         Tasks for {selectedDate}:
+//       </Text>
+//       <ScrollView>
+//         {selectedTasks.length > 0 ? (
+//           selectedTasks.map((task, index) => (
+//             <Pressable key={index} onPress={() => completeTask(index)}>
+//               <Text style={styles.taskText}>{task.name}</Text>
+//             </Pressable>
+//           ))
+//         ) : (
+//           <Text style={styles.noTaskText}>No tasks for this date</Text>
+//         )}
+//       </ScrollView>
+//     </View>
+//   );
+// }
 
 export default CalendarScreen;
 

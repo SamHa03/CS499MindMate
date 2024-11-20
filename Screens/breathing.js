@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { isRunningInExpoGo } from "expo";
 
 // =================== Breathing Action Begin ========================
 const BreathingAction = () => {
@@ -494,7 +495,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     fontSize: 16,
-    transform: [{ translateX: 10 }, { translateY: 50 }],
+    transform: [{ translateX: 15 }, { translateY: 50 }],
   },
   pomTimerText: {
     color: "#CBABD1",
