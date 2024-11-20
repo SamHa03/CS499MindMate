@@ -1,23 +1,31 @@
-// Screens/EditProfile.js
+// Screens/EditProfileScreen.js
+// Screen for editing user profile information including username, bio, profile picture, and password
+
+// **Imports**
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, Button, Alert, TouchableOpacity, Image, Modal } from "react-native";
-import { FIREBASE_AUTH, FIREBASE_STORAGE } from '../FirebaseConfig';
-import { updateUserData, fetchUserData, isUsernameTaken } from '../FirestoreHelpers';
+import { View, Text, TextInput, Button, Alert, TouchableOpacity, Image, Modal } from "react-native";
+import { FIREBASE_AUTH, FIREBASE_STORAGE } from "../Config/firebase-config";
+import { updateUserData, fetchUserData, isUsernameTaken } from "../Helpers/firestore-helpers";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
-import * as ImagePicker from 'expo-image-picker';
-import * as ImageManipulator from 'expo-image-manipulator';
+import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
+
+// Styles
+import { styles } from "../Styles/EditProfileStyles";
 
 export default function EditProfileScreen({ navigation }) {
-  const [username, setUsername] = useState("");
-  const [biography, setBiography] = useState("");
-  const [profilePicUrl, setProfilePicUrl] = useState(null);
-  const [currentUserUsername, setCurrentUserUsername] = useState("");
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [modalVisible, setModalVisible] = useState(false); // Ensure modalVisible state exists
-  const user = FIREBASE_AUTH.currentUser;
+  // **State Variables**
+  const [username, setUsername] = useState(""); // New username
+  const [biography, setBiography] = useState(""); // New bio
+  const [profilePicUrl, setProfilePicUrl] = useState(null); // Profile picture URL
+  const [currentUserUsername, setCurrentUserUsername] = useState(""); // Current username
+  const [currentPassword, setCurrentPassword] = useState(""); // Current password for re-authentication
+  const [newPassword, setNewPassword] = useState(""); // New password
+  const [modalVisible, setModalVisible] = useState(false); // Modal visibility state
+  const user = FIREBASE_AUTH.currentUser; // Current authenticated user
 
+  // **Load User Data**
   useEffect(() => {
     const loadUserData = async () => {
       if (!user) {
@@ -40,17 +48,25 @@ export default function EditProfileScreen({ navigation }) {
     loadUserData();
   }, [user]);
 
-// Password validation function
-const isValidPassword = (password) => {
-  const minLength = 8;
-  const maxLength = 40;
-  const hasUpperCase = /[A-Z]/.test(password);
-  const hasLowerCase = /[a-z]/.test(password);
-  const hasNumber = /[0-9]/.test(password);
-  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-  return password.length >= minLength && password.length <= maxLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
-};
+  // **Validate Password**
+  const isValidPassword = (password) => {
+    const minLength = 8;
+    const maxLength = 40;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    return (
+      password.length >= minLength &&
+      password.length <= maxLength &&
+      hasUpperCase &&
+      hasLowerCase &&
+      hasNumber &&
+      hasSpecialChar
+    );
+  };
 
+  // **Select and Upload Profile Picture**
   const handleSelectImage = async () => {
     try {
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -107,6 +123,7 @@ const isValidPassword = (password) => {
     }
   };
 
+  // **Save Profile**
   const handleSaveProfile = async () => {
     if (!user) {
       Alert.alert("User not logged in.");
@@ -131,6 +148,7 @@ const isValidPassword = (password) => {
     }
   };
 
+  // **Change Password**
   const handleChangePassword = async () => {
     if (!user) {
       Alert.alert("User not logged in.");
@@ -163,6 +181,7 @@ const isValidPassword = (password) => {
     }
   };
 
+  // **UI Rendering**
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Edit Profile</Text>
@@ -237,66 +256,3 @@ const isValidPassword = (password) => {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F2EEE9",
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  profilePic: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 15,
-    borderColor: "#69655E",
-    borderWidth: 2,
-  },
-  input: {
-    height: 50,
-    borderColor: "#69655E",
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 15,
-    backgroundColor: '#fff',
-  },
-  widerInput: {
-    width: "80%",
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)"
-  },
-  modalView: {
-    width: "80%",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 20,
-    alignItems: "center",
-    elevation: 5,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  cancelButton: {
-    marginTop: 10,
-  },
-  cancelText: {
-    color: "#CBABD1",
-    fontSize: 16,
-    textAlign: "center",
-  },
-  labelText: {
-    fontWeight: "bold",
-  },
-});

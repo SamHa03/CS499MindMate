@@ -1,18 +1,27 @@
-// Screens/profile.js
+// Screens/ProfileScreen.js
+// Screen for displaying user profile information
+
+// **Imports**
 import React, { useCallback, useState } from "react";
-import { View, Text, StyleSheet, Button, Image, ActivityIndicator, Alert } from "react-native";
-import { FIREBASE_AUTH } from '../FirebaseConfig';
-import { fetchUserData } from '../FirestoreHelpers';
+import { View, Text, Button, Image, ActivityIndicator, Alert } from "react-native";
+import { FIREBASE_AUTH } from "../Config/firebase-config";
+import { fetchUserData } from "../Helpers/firestore-helpers";
 import { signOut } from "firebase/auth";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "@react-navigation/native";
+
+// Styles
+import { styles } from "../Styles/ProfileStyles";
 
 export default function ProfileScreen({ navigation }) {
-  const [profilePic, setProfilePic] = useState("https://via.placeholder.com/100");
-  const [username, setUsername] = useState("Username");
-  const [biography, setBiography] = useState("Short bio goes here...");
-  const [loading, setLoading] = useState(true);
-  const user = FIREBASE_AUTH.currentUser;
+  // **State Variables**
+  const [profilePic, setProfilePic] = useState("https://via.placeholder.com/100"); // Profile picture URL
+  const [username, setUsername] = useState("Username"); // Username
+  const [biography, setBiography] = useState("Short bio goes here..."); // User bio
+  const [loading, setLoading] = useState(true); // Loading state for data fetching
 
+  const user = FIREBASE_AUTH.currentUser; // Currently authenticated user
+
+  // **Fetch User Data**
   const loadUserData = async () => {
     if (!user) {
       return;
@@ -32,12 +41,14 @@ export default function ProfileScreen({ navigation }) {
     }
   };
 
+  // **Effect to Load User Data on Screen Focus**
   useFocusEffect(
     useCallback(() => {
       loadUserData();
     }, [user])
   );
 
+  // **Handle Logout**
   const logOut = () => {
     signOut(FIREBASE_AUTH)
       .then(() => {
@@ -47,6 +58,7 @@ export default function ProfileScreen({ navigation }) {
       .catch((error) => Alert.alert("Failed to log out: ", error.message));
   };
 
+  // **Render Loading Indicator**
   if (loading) {
     return (
       <View style={styles.container}>
@@ -55,6 +67,7 @@ export default function ProfileScreen({ navigation }) {
     );
   }
 
+  // **Render User Profile**
   return (
     <View style={styles.container}>
       <View style={styles.profileSection}>
@@ -72,49 +85,3 @@ export default function ProfileScreen({ navigation }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: "space-between",
-    backgroundColor: "#F2EEE9",
-    flex: 1,
-  },
-  profileSection: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 20,
-  },
-  profilePic: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginRight: 15,
-    borderWidth: 2,
-    borderColor: "black",
-    shadowColor: "#000",
-    shadowOffset: { width: 1, height: 1 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-  },
-  textContainer: {
-    flex: 1,
-  },
-  username: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
-  bio: {
-    fontSize: 16,
-    color: "#69655E",
-    textAlign: "left",
-  },
-  bottomButtonsContainer: {
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingBottom: 130,
-  },
-  spacer: {
-    height: 0,
-  },
-});

@@ -1,5 +1,5 @@
 // firestoreHelpers.js
-import { FIRESTORE_DB } from './FirebaseConfig';
+import { FIRESTORE_DB } from '../Config/firebase-config';
 import { doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
 export const saveUserData = async (userId, username, bio, profilePicUrl) => {

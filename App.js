@@ -1,35 +1,42 @@
 // App.js
-// Imports
-import { StyleSheet, Text, View, SafeAreaView } from "react-native";
+// Main entry point for the MindMate application
+
+// **Imports**
 import * as React from "react";
 import { useState, useEffect } from "react";
+import { StyleSheet, Image } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Image } from 'react-native';
-import { onAuthStateChanged } from 'firebase/auth';
-import { FIREBASE_AUTH } from './FirebaseConfig';
-import { fetchUserData } from './FirestoreHelpers';
-
-// Import Screens
-import Login from './Screens/Login';
-import SetProfileScreen from './Screens/SetProfileScreen';
-import EditProfileScreen from './Screens/EditProfile';
-import BreathingAction from './Screens/BreathingAction';
-import ProfileScreen from './Screens/profile';
-import TimerScreen from './Screens/breathing';
-import ToDoListScreen from './Screens/ToDoList';
-import MoodLayout from "./Screens/MindMateBranch_Garrett/components/MoodLayout";
-import CalendarScreen from "./Screens/calendar";
-import TaskScreen from "./Screens/ToDoList";
-import UserScreen from "./Screens/profile";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-// Stacks
+// Firebase
+import { onAuthStateChanged } from "firebase/auth";
+import { FIREBASE_AUTH } from "./Config/firebase-config";
+import { fetchUserData } from "./Helpers/firestore-helpers";
+
+// Screens
+import Login from "./Screens/LoginScreen";
+import SetProfileScreen from "./Screens/SetProfileScreen";
+import EditProfileScreen from "./Screens/EditProfileScreen";
+import BreathingAction from "./Screens/BreathingAction";
+import ProfileScreen from "./Screens/ProfileScreen";
+import TimerScreen from "./Screens/breathing";
+import ToDoListScreen from "./Screens/ToDoList";
+import MoodLayout from "./Screens/MindMateBranch_Garrett/components/MoodLayout";
+import CalendarScreen from "./Screens/calendar";
+import TaskScreen from "./Screens/tasks";
+
+// Styles
+import { styles } from './Styles/AppStyles';
+
+
+// **Navigator Setup**
 const Stack = createNativeStackNavigator();
 const InsideStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+// **Tab Navigator for Main App**
 function InsideTabNavigator() {
   const [profilePic, setProfilePic] = useState(null);
 
@@ -55,22 +62,22 @@ function InsideTabNavigator() {
       initialRouteName="Profile"
       screenOptions={{
         headerStyle: { backgroundColor: "#F2EEE9" },
-        tabBarActiveTintColor: "#CBABD1", // lilac
-        tabBarInactiveTintColor: '#69655E', // gray
-        tabBarActiveBackgroundColor: "#D4C3B4", // medium tan
-        tabBarInactiveBackgroundColor: "#D4C3B4", // medium tan
+        tabBarActiveTintColor: "#CBABD1",
+        tabBarInactiveTintColor: "#69655E",
+        tabBarActiveBackgroundColor: "#D4C3B4",
+        tabBarInactiveBackgroundColor: "#D4C3B4",
         tabBarStyle: {
           flexDirection: "row",
           justifyContent: "space-around",
           height: 100,
           position: "absolute",
-          zIndex: 1,
           bottom: -30,
         },
-        tabBarIconStyle: { marginTop: 0, marginBottom: 15 },
+        tabBarIconStyle: { marginBottom: 15 },
         tabBarShowLabel: false,
       }}
     >
+      {/* Timer Tab */}
       <Tab.Screen
         name="Timer"
         component={TimerScreen}
@@ -78,6 +85,7 @@ function InsideTabNavigator() {
           tabBarIcon: ({ color }) => <Ionicons name="alarm-outline" color={color} size={35} />,
         }}
       />
+      {/* Mood Tab */}
       <Tab.Screen
         name="Mood"
         component={MoodLayout}
@@ -85,6 +93,7 @@ function InsideTabNavigator() {
           tabBarIcon: ({ color }) => <Ionicons name="happy-outline" color={color} size={35} />,
         }}
       />
+      {/* Calendar Tab */}
       <Tab.Screen
         name="Calendar"
         component={CalendarScreen}
@@ -92,6 +101,7 @@ function InsideTabNavigator() {
           tabBarIcon: ({ color }) => <Ionicons name="home" color={color} size={70} style={{ paddingBottom: 112 }} />,
         }}
       />
+      {/* Tasks Tab */}
       <Tab.Screen
         name="Tasks"
         component={TaskScreen}
@@ -99,12 +109,13 @@ function InsideTabNavigator() {
           tabBarIcon: ({ color }) => <Ionicons name="add-circle-outline" color={color} size={35} />,
         }}
       />
+      {/* Profile Tab */}
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
         initialParams={{ profilePic }}
         options={{
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({ color }) =>
             profilePic ? (
               <Image
                 source={{ uri: profilePic }}
@@ -118,14 +129,14 @@ function InsideTabNavigator() {
               />
             ) : (
               <Ionicons name="person-circle-outline" color={color} size={35} />
-            )
-          ),
+            ),
         }}
       />
     </Tab.Navigator>
   );
 }
 
+// **Stack Navigator for App Layout**
 function InsideLayout() {
   return (
     <InsideStack.Navigator>
@@ -133,15 +144,16 @@ function InsideLayout() {
       <InsideStack.Screen name="BreathingAction" component={BreathingAction} />
       <InsideStack.Screen name="ToDoList" component={ToDoListScreen} />
       <InsideStack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: "Edit Profile" }} />
-      {/* Additional screens can be added here */}
     </InsideStack.Navigator>
   );
 }
 
+// **Main App Component**
 export default function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+    // Monitor Firebase authentication state
     onAuthStateChanged(FIREBASE_AUTH, (user) => {
       setUser(user);
     });
@@ -149,7 +161,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Login'>
+      <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="SetProfile" component={SetProfileScreen} options={{ title: "Set Up Profile" }} />
         <Stack.Screen name="Inside" component={InsideLayout} options={{ headerShown: false }} />
@@ -301,22 +313,3 @@ export default function App() {
 //     </View>
 //   );
 // }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    zIndex: 2,
-    backgroundColor: "#F2EEE9",
-  },
-  circleBehind: {
-    backgroundColor: "#d4c3b4",
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    position: "absolute",
-    bottom: 5,
-    left: "50%",
-    transform: [{ translateX: -60 }],
-    zIndex: 0,
-  },
-});

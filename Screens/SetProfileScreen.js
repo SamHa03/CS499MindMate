@@ -1,17 +1,26 @@
 // Screens/SetProfileScreen.js
+// Screen for setting up a user profile with username, bio, and profile picture
+
+// **Imports**
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, Alert, Image, TouchableOpacity, StyleSheet } from "react-native";
-import { FIREBASE_AUTH, FIREBASE_STORAGE } from '../FirebaseConfig';
-import { saveUserData, isUsernameTaken } from '../FirestoreHelpers';
+import { View, Text, TextInput, Button, Alert, Image, TouchableOpacity } from "react-native";
+import { FIREBASE_AUTH, FIREBASE_STORAGE } from "../Config/firebase-config";
+import { saveUserData, isUsernameTaken } from "../Helpers/firestore-helpers";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
+
+// Styles
+import { styles } from "../Styles/SetProfileStyles";
 
 export default function SetProfileScreen({ navigation }) {
-  const [username, setUsername] = useState("");
-  const [biography, setBiography] = useState("");
-  const [profilePicUrl, setProfilePicUrl] = useState(null);
-  const user = FIREBASE_AUTH.currentUser;
+  // **State Variables**
+  const [username, setUsername] = useState(""); // Stores the username
+  const [biography, setBiography] = useState(""); // Stores the bio
+  const [profilePicUrl, setProfilePicUrl] = useState(null); // Stores the profile picture URL
 
+  const user = FIREBASE_AUTH.currentUser; // Current authenticated user
+
+  // **Select and Upload Profile Picture**
   const handleSelectImage = async () => {
     try {
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -42,6 +51,7 @@ export default function SetProfileScreen({ navigation }) {
     }
   };
 
+  // **Save Profile**
   const handleSaveProfile = async () => {
     if (!username) {
       Alert.alert("Username is required.");
@@ -64,6 +74,7 @@ export default function SetProfileScreen({ navigation }) {
     }
   };
 
+  // **UI Rendering**
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Set Up Your Profile</Text>
@@ -92,37 +103,3 @@ export default function SetProfileScreen({ navigation }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F2EEE9",
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  profilePic: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 15,
-    borderColor: "#69655E",
-    borderWidth: 2,
-  },
-  label: {
-    fontWeight: "bold",
-    marginTop: 10,
-  },
-  input: {
-    height: 50,
-    borderColor: "#69655E",
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 15,
-    backgroundColor: "#fff",
-  },
-});

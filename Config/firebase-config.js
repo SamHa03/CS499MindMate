@@ -4,14 +4,22 @@ import { getAuth, initializeAuth, getReactNativePersistence } from "firebase/aut
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { 
+  API_KEY, 
+  AUTH_DOMAIN, 
+  PROJECT_ID, 
+  STORAGE_BUCKET, 
+  MESSAGING_SENDER_ID, 
+  APP_ID 
+} from '@env';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBP5Ng9e8DVV2GdHX7xNYr-DFVYMhXdo6A",
-  authDomain: "mindmate-ed3b8.firebaseapp.com",
-  projectId: "mindmate-ed3b8",
-  storageBucket: "mindmate-ed3b8.appspot.com",
-  messagingSenderId: "744208906785",
-  appId: "1:744208906785:web:090f4aaf0603e686388160"
+  apiKey: API_KEY,
+  authDomain: AUTH_DOMAIN,
+  projectId: PROJECT_ID,
+  storageBucket: STORAGE_BUCKET,
+  messagingSenderId: MESSAGING_SENDER_ID,
+  appId: APP_ID,
 };
 
 // Initialize Firebase
