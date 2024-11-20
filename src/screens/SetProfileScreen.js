@@ -1,17 +1,26 @@
-// Screens/SetProfileScreen.js
+// screens/SetProfileScreen.js
+// Screen for setting up a user profile with username, bio, and profile picture
+
+// **Imports**
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, Alert, Image, TouchableOpacity, StyleSheet } from "react-native";
-import { FIREBASE_AUTH, FIREBASE_STORAGE } from '../FirebaseConfig';
-import { saveUserData, isUsernameTaken } from '../FirestoreHelpers';
+import { View, Text, TextInput, Button, Alert, Image, TouchableOpacity } from "react-native";
+import { FIREBASE_AUTH, FIREBASE_STORAGE } from "../config/firebase-config";
+import { saveUserData, isUsernameTaken } from "../helpers/firestore-helpers";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
+
+// Styles
+import { styles } from "../styles/SetProfileStyles";
 
 export default function SetProfileScreen({ navigation }) {
-  const [username, setUsername] = useState("");
-  const [biography, setBiography] = useState("");
-  const [profilePicUrl, setProfilePicUrl] = useState(null);
-  const user = FIREBASE_AUTH.currentUser;
+  // **State Variables**
+  const [username, setUsername] = useState(""); // Stores the username
+  const [biography, setBiography] = useState(""); // Stores the bio
+  const [profilePicUrl, setProfilePicUrl] = useState(null); // Stores the profile picture URL
 
+  const user = FIREBASE_AUTH.currentUser; // Current authenticated user
+
+  // **Select and Upload Profile Picture**
   const handleSelectImage = async () => {
     try {
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -32,9 +41,9 @@ export default function SetProfileScreen({ navigation }) {
         const response = await fetch(uri);
         const blob = await response.blob();
 
-        await uploadBytes(storageRef, blob);
-        const downloadUrl = await getDownloadURL(storageRef);
-        setProfilePicUrl(downloadUrl);
+        await uploadBytes(storageRef, blob); // Upload to Firebase Storage
+        const downloadUrl = await getDownloadURL(storageRef); // Get download URL
+        setProfilePicUrl(downloadUrl); // Update state with profile picture URL
       }
     } catch (error) {
       console.error("Error during image upload:", error);
@@ -42,6 +51,7 @@ export default function SetProfileScreen({ navigation }) {
     }
   };
 
+  // **Save Profile**
   const handleSaveProfile = async () => {
     if (!username) {
       Alert.alert("Username is required.");
@@ -49,21 +59,27 @@ export default function SetProfileScreen({ navigation }) {
     }
 
     try {
-      const isTaken = await isUsernameTaken(username);
+      const isTaken = await isUsernameTaken(username); // Check for username availability
       if (isTaken) {
         Alert.alert("This username is already taken. Please choose a different one.");
         return;
       }
 
-      await saveUserData(user.uid, username, biography, profilePicUrl || "https://via.placeholder.com/100");
+      await saveUserData(
+        user.uid,
+        username,
+        biography,
+        profilePicUrl || "https://via.placeholder.com/100"
+      );
       Alert.alert("Profile set successfully!");
-      navigation.navigate("Inside"); // Navigate to the main app screen or home screen
+      navigation.navigate("Inside"); // Navigate to main app screen
     } catch (error) {
       console.error("Error saving profile:", error);
       Alert.alert("Failed to set profile. Please try again.");
     }
   };
 
+  // **UI Rendering**
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Set Up Your Profile</Text>
@@ -92,37 +108,3 @@ export default function SetProfileScreen({ navigation }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F2EEE9",
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  profilePic: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 15,
-    borderColor: "#69655E",
-    borderWidth: 2,
-  },
-  label: {
-    fontWeight: "bold",
-    marginTop: 10,
-  },
-  input: {
-    height: 50,
-    borderColor: "#69655E",
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 15,
-    backgroundColor: "#fff",
-  },
-});
