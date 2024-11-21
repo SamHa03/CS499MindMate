@@ -2,9 +2,10 @@
 // Displays a calendar with tasks for selected dates. Users can view, filter, and mark tasks as complete.
 
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import { Calendar } from "react-native-calendars";
 import CustomCheckBox from "../Components/CustomCheckBox";
+import EditTask from '../Components/EditTaskModal';
 import { fetchTasks, updateTask } from "../Helpers/firestore-helpers";
 import { FIREBASE_AUTH } from "../Config/firebase-config";
 import { useFocusEffect } from "@react-navigation/native";
@@ -19,6 +20,8 @@ const CalendarScreen = () => {
   const [selectedDate, setSelectedDate] = useState(currentDate); // Selected date
   const [tasks, setTasks] = useState([]); // Tasks for the selected date
   const [markedDates, setMarkedDates] = useState({}); // Dates marked with tasks on the calendar
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
 
   // **Load Tasks and Marked Dates**
   const loadTasks = useCallback(async () => {
@@ -38,6 +41,8 @@ const CalendarScreen = () => {
 
         Object.keys(tasksGroupedByDate).forEach((date) => {
           const tasksForDate = tasksGroupedByDate[date];
+
+          // Handle the dots for the date
           const dots = tasksForDate.slice(0, 3).map((task, index) => ({
             key: `${task.id}-${index}`,
             color: "#e65151", // Red dot for tasks
@@ -111,18 +116,37 @@ const CalendarScreen = () => {
       <ScrollView>
         {tasks.length > 0 ? (
           tasks.map((task) => (
-            <View key={task.id} style={styles.taskItem}>
-              <Text style={styles.taskText}>{task.name}</Text>
-              <CustomCheckBox
-                value={task.completed}
-                onValueChange={() => toggleTaskCompletion(task.id, task.completed)}
-              />
-            </View>
+            <Pressable
+              key={task.id}
+              onLongPress={() => {
+                setSelectedTask(task); // Set the task to be edited
+                setIsEditModalVisible(true); // Open the modal
+              }}
+            >
+              <View style={[styles.taskItem, { backgroundColor: task.color }]}>
+                <Text style={styles.taskText}>{task.name}</Text>
+                <CustomCheckBox
+                  value={task.completed}
+                  onValueChange={() => toggleTaskCompletion(task.id, task.completed)}
+                />
+              </View>
+            </Pressable>
           ))
         ) : (
           <Text style={styles.noTaskText}>No tasks for this date</Text>
         )}
       </ScrollView>
+
+      {/* EditTask Modal */}
+      <EditTask
+        visible={isEditModalVisible}
+        task={selectedTask}
+        onClose={() => setIsEditModalVisible(false)} // Close the modal
+        onSave={(updatedTask) => {
+          updateTask(userId, updatedTask.id, updatedTask); // Update task in Firebase
+          loadTasks(); // Refresh tasks after saving
+        }}
+      />
     </View>
   );
 };

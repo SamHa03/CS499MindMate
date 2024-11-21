@@ -33,7 +33,6 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#D4E09B",
     margin: 10,
     padding: 15,
     borderRadius: 10,
@@ -41,7 +40,7 @@ export const styles = StyleSheet.create({
   },
   taskText: {
     fontSize: 18,
-    color: "#69655E",
+    color: "#FFFFFF",
   },
   noTaskText: {
     fontSize: 18,
