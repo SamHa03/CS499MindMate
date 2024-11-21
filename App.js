@@ -22,10 +22,9 @@ import EditProfileScreen from "./Screens/EditProfileScreen";
 import BreathingAction from "./Screens/BreathingAction";
 import ProfileScreen from "./Screens/ProfileScreen";
 import TimerScreen from "./Screens/breathing";
-import ToDoListScreen from "./Screens/ToDoList";
 import MoodLayout from "./Screens/MindMateBranch_Garrett/components/MoodLayout";
-import CalendarScreen from "./Screens/calendar";
-import TaskScreen from "./Screens/tasks";
+import CalendarScreen from "./Screens/CalendarScreen";
+import TaskScreen from "./Screens/TaskScreen";
 
 // Styles
 import { styles } from './Styles/AppStyles';
@@ -142,7 +141,6 @@ function InsideLayout() {
     <InsideStack.Navigator>
       <InsideStack.Screen name="Main" component={InsideTabNavigator} options={{ headerShown: false }} />
       <InsideStack.Screen name="BreathingAction" component={BreathingAction} />
-      <InsideStack.Screen name="ToDoList" component={ToDoListScreen} />
       <InsideStack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: "Edit Profile" }} />
     </InsideStack.Navigator>
   );

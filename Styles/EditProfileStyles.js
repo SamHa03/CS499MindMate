@@ -1,7 +1,7 @@
 // Styles/EditProfileStyles.js
 // Styles for Screens/EditProfileScreen.js
 
-// **Imports
+// **Imports**
 import { StyleSheet } from "react-native";
 
 // **Main Export**

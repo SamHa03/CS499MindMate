@@ -4,7 +4,7 @@
 // **Imports**
 import { StyleSheet } from "react-native";
 
-// **Main Import**
+// **Main Export**
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
