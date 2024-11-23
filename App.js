@@ -1,234 +1,169 @@
 // App.js
+// Main entry point for the MindMate application
 
-// libraries / dependencies to bring in
-import { StyleSheet, Text, View } from "react-native";
+// **Imports**
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { StyleSheet, Image } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
-// screens
-// import BreathingScreen from "./Screens/breathing"; // may need later
-import timerScreen from "./Screens/BreathingAction";
-import CalendarScreen from "./Screens/calendar";
-import TaskScreen from "./Screens/ToDoList";
-import UserScreen from "./Screens/profile";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
+// Firebase
+import { onAuthStateChanged } from "firebase/auth";
+import { FIREBASE_AUTH } from "./Config/firebase-config";
+import { fetchUserData } from "./Helpers/firestore-helpers";
+
+// Screens
+import Login from "./Screens/LoginScreen";
+import SetProfileScreen from "./Screens/SetProfileScreen";
+import EditProfileScreen from "./Screens/EditProfileScreen";
+import BreathingAction from "./Screens/BreathingAction";
+import ProfileScreen from "./Screens/ProfileScreen";
+import TimerScreen from "./Screens/breathing";
+import MoodLayout from "./Screens/MindMateBranch_Garrett/components/MoodLayout";
+import CalendarScreen from "./Screens/CalendarScreen";
+import TaskScreen from "./Screens/TaskScreen";
+
+// Styles
+import { styles } from './Styles/AppStyles';
+
+
+// **Navigator Setup**
 const Stack = createNativeStackNavigator();
+const InsideStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// =============== functions ===============
-function AppHomeScreen({}) {
+// **Tab Navigator for Main App**
+function InsideTabNavigator() {
+  const [profilePic, setProfilePic] = useState(null);
+
+  useEffect(() => {
+    // Fetch the user's profile data from Firestore
+    const fetchProfileData = async () => {
+      try {
+        const userId = FIREBASE_AUTH.currentUser?.uid;
+        if (userId) {
+          const userData = await fetchUserData(userId);
+          setProfilePic(userData?.profilePicture || null); // Set profile picture or null if not available
+        }
+      } catch (error) {
+        console.error("Error fetching profile picture:", error);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <View style={styles.circleBehind} />
-    </View>
+    <Tab.Navigator
+      initialRouteName="Calendar"
+      screenOptions={{
+        headerStyle: { backgroundColor: "#F2EEE9" },
+        tabBarActiveTintColor: "#CBABD1",
+        tabBarInactiveTintColor: "#69655E",
+        tabBarActiveBackgroundColor: "#D4C3B4",
+        tabBarInactiveBackgroundColor: "#D4C3B4",
+        tabBarStyle: {
+          flexDirection: "row",
+          justifyContent: "space-around",
+          height: 100,
+          position: "absolute",
+          bottom: -30,
+        },
+        tabBarIconStyle: { marginBottom: 15 },
+        tabBarShowLabel: false,
+      }}
+    >
+      {/* Timer Tab */}
+      <Tab.Screen
+        name="Timer"
+        component={TimerScreen}
+        options={{
+          tabBarIcon: ({ color }) => <Ionicons name="alarm-outline" color={color} size={35} />,
+        }}
+      />
+      {/* Mood Tab */}
+      <Tab.Screen
+        name="Mood"
+        component={MoodLayout}
+        options={{
+          tabBarIcon: ({ color }) => <Ionicons name="happy-outline" color={color} size={35} />,
+        }}
+      />
+      {/* Calendar Tab */}
+      <Tab.Screen
+        name="Calendar"
+        component={CalendarScreen}
+        options={{
+          tabBarIcon: ({ color }) => <Ionicons name="home" color={color} size={50} style={{ paddingBottom: 50 }} />,
+        }}
+      />
+      {/* Tasks Tab */}
+      <Tab.Screen
+        name="Tasks"
+        component={TaskScreen}
+        options={{
+          tabBarIcon: ({ color }) => <Ionicons name="add-circle-outline" color={color} size={35} />,
+        }}
+      />
+      {/* Profile Tab */}
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        initialParams={{ profilePic }}
+        options={{
+          tabBarIcon: ({ color }) =>
+            profilePic ? (
+              <Image
+                source={{ uri: profilePic }}
+                style={{
+                  width: 35,
+                  height: 35,
+                  borderRadius: 17.5,
+                  borderWidth: 1,
+                  borderColor: color,
+                }}
+              />
+            ) : (
+              <Ionicons name="person-circle-outline" color={color} size={35} />
+            ),
+        }}
+      />
+    </Tab.Navigator>
   );
 }
 
-// =============== main begins here ===============
+// **Stack Navigator for App Layout**
+function InsideLayout() {
+  return (
+    <InsideStack.Navigator>
+      <InsideStack.Screen name="Main" component={InsideTabNavigator} options={{ headerShown: false }} />
+      <InsideStack.Screen name="BreathingAction" component={BreathingAction} />
+      <InsideStack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: "Edit Profile" }} />
+    </InsideStack.Navigator>
+  );
+}
+
+// **Main App Component**
 export default function App() {
-  // *** Added tasks state and functions ***
-  const [tasks, setTasks] = useState({});
+  const [user, setUser] = useState(null);
 
-  // function to add a new task
-  const addTask = (date, time, name) => {
-    setTasks(prevTasks => {
-      const updatedTasks = { ...prevTasks };
-      if (!updatedTasks[date]) {
-        updatedTasks[date] = [];
-      }
-      updatedTasks[date].push({ name, date, time });
-      console.log(updatedTasks);
-      return updatedTasks;
+  useEffect(() => {
+    // Monitor Firebase authentication state
+    onAuthStateChanged(FIREBASE_AUTH, (user) => {
+      setUser(user);
     });
-  };
-
-  // function to remove a task
-  const removeTask = (date, index) => {
-    setTasks(prevTasks => {
-      const updatedTasks = { ...prevTasks };
-      if (updatedTasks[date]) {
-        updatedTasks[date].splice(index, 1);
-      }
-      return updatedTasks;
-    });
-  };
-
-  const currentDate = new Date().toLocaleDateString("en-CA");
-  const todayTasks = tasks[currentDate] || [];
-  
+  }, []);
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#F2EEE9" }}>
-      <NavigationContainer>
-        <Tab.Navigator
-          // always default to home / app startup page
-          initialRouteName="Home"
-          screenOptions={{
-            headerStyle: {
-              backgroundColor: "#F2EEE9", // light tan
-            },
-            // tab bar icon styling
-            headerTintColor: "#D4E09B",
-            tabBarActiveTintColor: "#CBABD1", // lilac
-            tabBarInactiveTintColor: "#69655E", // gray
-            tabBarActiveBackgroundColor: "#D4C3B4", // medium tan
-            tabBarInactiveBackgroundColor: "#D4C3B4", // medium tan
-            tabBarStyle: {
-              flexDirection: "row",
-              justifyContent: "space-around",
-              padding: 0,
-              borderTopWidth: 0,
-              borderBottomWidth: 0,
-              bottom: -30,
-              height: 100,
-              position: "absolute",
-              zIndex: 1,
-            },
-            tabBarIconStyle: {
-              marginTop: 0,
-              marginBottom: 15,
-            },
-          }}
-        >
-          {/* ========== Focus Timer / Pomodoro Timer Navigation ========== */}
-          <Tab.Screen
-            name="Timer"
-            component={timerScreen}
-            options={{
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="alarm-outline" color={"#F2EEE9"} size={35} />
-              ),
-              tabBarShowLabel: false,
-            }}
-          />
-
-          {/* ========== Calendar Navigation ========== */}
-          <Tab.Screen
-            name="Calendar"
-            options={{
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="calendar-number-outline" color={"#F2EEE9"} size={35} />
-              ),
-              tabBarShowLabel: false,
-            }}
-          >
-            {/* Pass tasks and removeTask function to CalendarScreen */}
-            {(props) => (
-              <CalendarScreen
-                {...props}
-                tasks={tasks}
-                removeTask={removeTask}
-              />
-            )}
-          </Tab.Screen>
-
-          {/* ========== Home Navigation ========== */}
-          <Tab.Screen
-            name="Home"
-            component={AppHomeScreen}
-            options={{
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons
-                  name="home"
-                  color={"#F2EEE9"}
-                  size={70}
-                  style={{ paddingBottom: 112 }}
-                />
-              ),
-              tabBarShowLabel: false,
-            }}
-          />
-
-          {/* ========== Edit Tasks Navigation ========== */}
-          <Tab.Screen
-            name="Task List"
-            options={{
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="add-circle-outline" color={"#F2EEE9"} size={35} />
-              ),
-              tabBarShowLabel: false,
-            }}
-          >
-            {(props) => (
-              <TaskScreen
-                {...props}
-                addTask={addTask}
-                tasks={todayTasks}
-                removeTask={removeTask}
-              />
-            )}
-          </Tab.Screen>
-
-          {/* ========== User Profile Navigation ========== */}
-          <Tab.Screen
-            name="User Profile"
-            component={UserScreen}
-            options={{
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons
-                  name="person-circle-outline"
-                  color={"#F2EEE9"}
-                  size={35}
-                />
-              ),
-              tabBarShowLabel: false,
-            }}
-          />
-        </Tab.Navigator>
-      </NavigationContainer>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+        <Stack.Screen name="SetProfile" component={SetProfileScreen} options={{ title: "Set Up Profile" }} />
+        <Stack.Screen name="Inside" component={InsideLayout} options={{ headerShown: false }} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-// =============== styles ===============
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    zIndex: 2,
-    backgroundColor: "#F2EEE9",
-  },
-  bottomContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    padding: 15,
-    backgroundColor: "#d4c3b4",
-  },
-  sideButton: {
-    backgroundColor: "#f2eee9",
-    width: 65,
-    height: 65,
-    bottom: 10,
-    borderRadius: 35, // Circle shape
-    justifyContent: "center",
-    alignItems: "center",
-    margin: 5,
-    verticalAlign: "center",
-  },
-  homeButton: {
-    backgroundColor: "#f2eee9",
-    width: 90,
-    height: 90,
-    bottom: 30,
-    borderRadius: 45, // Bigger circle for Home button
-    justifyContent: "center",
-    alignItems: "center",
-    verticalAlign: "center",
-    zIndex: 2,
-  },
-  circleBehind: {
-    backgroundColor: "#d4c3b4", // Gold background color for the circle
-    width: 120,
-    height: 120,
-    borderRadius: 60, // Circle shape
-    position: "absolute",
-    bottom: 5, // Makes it jut out above the bottom container
-    left: "50%", // Center the circle horizontally
-    transform: [{ translateX: -60 }], // Adjust positioning to center it properly
-    zIndex: 0, // Ensures the circle is behind the home button
-  },
-});
