@@ -81,8 +81,8 @@ const BreathingAction = () => {
                   setShowTime(0);
               }
               setShowTime((showTime) => showTime + 1); //Increments the show timer
-              console.log("Internal: " + time);
-              console.log("Shown: " + showTime);
+              //console.log("Internal: " + time);
+              //console.log("Shown: " + showTime);
           }, 1000);
 
       } else { //if the timer is not running then set the non-show and the show times to 1 and clear the interval.
@@ -123,7 +123,7 @@ const BreathingAction = () => {
     setMessage("Press the Circle to Begin"); //Resets the message
     setColorOfCircle("#F19C79"); //Resets the color
     setBreathingButtonToggle(false); //Returns it pressable
-    Animated.timing(scaleValue, {
+    Animated.timing(scaleValue, { //rests the circle when the modal closes
       toValue: 1,
       duration: 100,
       useNativeDriver: true,
