@@ -30,86 +30,106 @@ const BreathingAction = () => {
   const [pomTimerMode, setPomTimerMode] = useState("Focus Time");
 
   // breathing exercise stuff
-  const scaleValue = useRef(new Animated.Value(1)).current; //Opacity used for the animation
+  const scaleValue = useRef(new Animated.Value(1)).current; //Transform Value used for the animation
 
   const [breathingHistory, setBreathingHistory] = useState([]); //Breathing history array
 
   const [breathingButtonToggle, setBreathingButtonToggle] = useState(false); //Toggle that decides whether the breathing excersice button is pressable
 
-  const [message, setMessage] = useState(""); // Breath in, hold and out variable
+  const [message, setMessage] = useState("Press the Circle to Begin"); // Breath in, hold and out variable
+  const [colorOfCircle, setColorOfCircle] = useState("#F19C79"); //Color that the circle changes to 
 
-  const [time, setTime] = useState(0); //Time that shows for what section the breathing exercise is on
-  const [isRunning, setIsRunning] = useState(false); //Toggle if the timer is running or not
+  const[time, setTime] = useState(0); //Time that shows for what section the breathing exercise is on
+  const[isRunning, setIsRunning] = useState(false); //Toggle if the timer is running or not
+  const[showTime, setShowTime] = useState(0); //Time that is actually shown to the user
 
   //Adds to the history array
-  function addToHistory() {
-    setBreathingHistory([
-      ...breathingHistory,
-      {
-        date: new Date().toLocaleDateString(),
-        time: new Date().toLocaleTimeString(),
-      },
-    ]);
+  function addToHistory(){ 
+      setBreathingHistory([...breathingHistory, 
+          {date: new Date().toLocaleDateString(), time: new Date().toLocaleTimeString()}]);
   }
 
-  /* effect that waits for the change of isRunning for true.
-    If true then it starts the timer. If false it stops the timer and resets time to 1;
-    */
+  /* 
+  Main driver of breathing action. Checks with a non-showing timer to see if the showing timer needs to be reset. 
+  Then calls each part of the animation that deals with increasing and shrinking the circle. 
+  */
   useEffect(() => {
-    setTime(1);
-    let interval;
-    if (isRunning) {
-      interval = setInterval(() => {
-        setTime((prevTime) => prevTime + 1);
-      }, 1000);
-    } else {
-      clearInterval(interval);
-    }
-    return () => clearInterval(interval);
-  }, [isRunning]);
+      let interval;
+      if (isRunning) {
+          interval = setInterval(() =>{
+              setTime((prevTime) => prevTime + 1); //increments the main time
+              if (time == 1){ //Sets the breath in text and begins the animation
+                  setMessage("Breathe in");
+                  setColorOfCircle("#F19C79");
+                  BreathIn();
+                  
+              }
+              else if (time == 4){ //Animation does nothing while text changes and changes the color of the circle
+                  setShowTime(0);
+                  setMessage("Hold your Breath");
+                  setColorOfCircle("#A44A3F");
+              }
+              else if (time == 11){ //Animation shrinks, text changes and the color of the circle changes.
+                  setShowTime(0);
+                  setMessage("Breathe Out");
+                  BreathOut();
+                  setColorOfCircle("#D4E09B");
+              }
+              else if (time == 19){ //Resets the timer
+                  setBreathingButtonToggle(false); 
+                  setTime(1);
+                  setShowTime(0);
+              }
+              setShowTime((showTime) => showTime + 1); //Increments the show timer
+              console.log("Internal: " + time);
+              console.log("Shown: " + showTime);
+          }, 1000);
+
+      } else { //if the timer is not running then set the non-show and the show times to 1 and clear the interval.
+          setTime(1);
+          setShowTime(1);  
+          clearInterval(interval);
+      }
+      return () => clearInterval(interval);
+  }, [isRunning, time]);
 
   //Animation steps for the circle expanding and shrinking
-  //Since the function executes everthing at once without waiting for the timeout
-  //  of the previous stage to finish the different stages run after waiting for
+  //Since the function executes everthing at once without waiting for the timeout 
+  //  of the previous stage to finish the different stages run after waiting for 
   //  a combined time of all of the previous stages.
   //For example the "Hold your breath stage" executes after 4 seconds of waiting rather than
   //  until for timeing to finish.
-  const BreathingCircleAnimation = () => {
-    setMessage("Breathe in"); //Sets the message to "Breath in"
-
-    Animated.timing(scaleValue, {
-      //Expands the circle over 4 seconds
-      toValue: 2,
-      duration: 4000,
-      useNativeDriver: true,
-    }).start();
-
-    setTimeout(() => {
-      //The circle doesn't move, however the timer does reset
-      setMessage("Hold your Breath");
-      setIsRunning(false);
-      setIsRunning(true);
-    }, 4000);
-
-    setTimeout(() => {
-      //Circle shrinks, message changes
-      setMessage("Breath Out");
-      Animated.timing(scaleValue, {
-        toValue: 1,
-        duration: 8000,
-        useNativeDriver: true,
+  //Animation for expanding the circle
+  const BreathIn = () => {
+      Animated.timing(scaleValue, { //Expands the circle over 4 seconds
+          toValue: 2,
+          duration: 4000,
+          useNativeDriver: true,
       }).start();
-
-      setIsRunning(false);
-      setIsRunning(true);
-    }, 11000);
-
-    setTimeout(() => {
-      //Completely resets the timer and re-enables the breathing exercise button
-      setBreathingButtonToggle(false);
-      setIsRunning(false);
-    }, 19000);
   };
+
+  //Animation for shrinking the circle
+  const BreathOut= () => {   
+      Animated.timing(scaleValue, {
+          toValue: 1,
+          duration: 8000,
+          useNativeDriver: true,
+      }).start();
+  };
+
+  const CloseBreathingModal = () => {
+    setModalIsVisible1(false); //Hides the Modal
+    setIsRunning(false); //Disables the timer
+    setMessage("Press the Circle to Begin"); //Resets the message
+    setColorOfCircle("#F19C79"); //Resets the color
+    setBreathingButtonToggle(false); //Returns it pressable
+    Animated.timing(scaleValue, {
+      toValue: 1,
+      duration: 100,
+      useNativeDriver: true,
+  }).start();
+  };
+
   // =================== Breathing Action End ========================
 
   // =================== Pomodoro Timer Begin ========================
@@ -232,31 +252,29 @@ const BreathingAction = () => {
         visible={modalVisibility1}
         animationType="slide"
       >
-        <TouchableWithoutFeedback onPress={() => setModalIsVisible1(false)}>
+        <TouchableWithoutFeedback onPress={() => CloseBreathingModal()}>
           <View style={styles.modalContainer}>
             {/*Message that shows In, Hold, and out messages*/}
-            <Text style={styles.timerText}>{message}</Text>
-
-            {/*Shows the timer*/}
-            <View>
-              <Text style={styles.timerText}>{time}</Text>
-            </View>
+            <Text style={[styles.messageText]}>{message}</Text>
+            
 
             {/*Cirlce that expands is also a pressable*/}
-            <Pressable
-              disabled={breathingButtonToggle}
-              onPress={() => {
+            <Pressable disabled={breathingButtonToggle} onPress={() => {
                 setBreathingButtonToggle(true); //Disables pressable
                 setIsRunning(true); //Starts the timer
-                BreathingCircleAnimation(); //Begins the animation
                 addToHistory(); //Adds the session to the array
-              }}
-            >
-              <Animated.View //Animated view that allows for the transformation of the circle
-                style={[styles.circle, { transform: [{ scale: scaleValue }] }]}
-              />
+                }}>
+                <Animated.View //Animated view that allows for the transformation of the circle
+                backgroundColor={colorOfCircle} //Sets the color of the circle
+                style={[
+                    styles.circle,
+                    {transform: [{scale: scaleValue}]}
+                ]
+                }
+                />
+                <Text style={styles.timerText}>{showTime}</Text>
             </Pressable>
-          </View>
+        </View>
         </TouchableWithoutFeedback>
       </Modal>
 
@@ -407,17 +425,20 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: "blue",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 80,
-    marginBottom: 80,
   },
-  timerText: {
+  timerText:{
     fontSize: 48,
-    backgroundColor: "#F2EEE9",
+    paddingBottom: 50,
+    position: 'absolute',
+    color: '#F2EEE9',
+    left: 38,
+    top: 20,
   },
+  messageText:{
+    bottom: 150,
+    fontSize: 35,
+    color: "#a7bed3",
+},
   circleBehind: {
     backgroundColor: "#d4c3b4",         // Gold background color for the circle
     width: 120,
