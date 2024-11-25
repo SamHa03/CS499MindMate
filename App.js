@@ -22,7 +22,7 @@ import EditProfileScreen from "./Screens/EditProfileScreen";
 import BreathingAction from "./Screens/BreathingAction";
 import ProfileScreen from "./Screens/ProfileScreen";
 import TimerScreen from "./Screens/breathing";
-import MoodLayout from "./Screens/MindMateBranch_Garrett/components/MoodLayout";
+import MoodScreen from "./Screens/MoodScreen";
 import CalendarScreen from "./Screens/CalendarScreen";
 import TaskScreen from "./Screens/TaskScreen";
 
@@ -87,7 +87,7 @@ function InsideTabNavigator() {
       {/* Mood Tab */}
       <Tab.Screen
         name="Mood"
-        component={MoodLayout}
+        component={MoodScreen}
         options={{
           tabBarIcon: ({ color }) => <Ionicons name="happy-outline" color={color} size={35} />,
         }}

@@ -13,6 +13,7 @@ import {
   getDocs,
   addDoc,
   deleteDoc,
+  arrayUnion,
 } from 'firebase/firestore';
 
 // **Save User Data**
@@ -122,5 +123,81 @@ export const deleteTask = async (userId, taskId) => {
     console.log("Task deleted successfully!");
   } catch (error) {
     console.error("Error deleting task:", error);
+  }
+};
+
+// Save mood to Firestore
+export const saveMood = async (userId, moodData) => {
+  try {
+    const now = new Date();
+    const dateString = now.toISOString().split("T")[0]; // Use today's date as the document ID
+
+    const dayDocRef = doc(FIRESTORE_DB, "users", userId, "Mood", dateString);
+
+    // Fetch the existing document
+    const docSnap = await getDoc(dayDocRef);
+    let updatedEntries = [];
+
+    if (docSnap.exists()) {
+      // Get existing entries and append the new mood data
+      const existingData = docSnap.data();
+      updatedEntries = existingData.entries || [];
+    }
+
+    updatedEntries.push(moodData); // Add the new mood entry
+
+    // Save the updated document back to Firestore
+    await setDoc(dayDocRef, { entries: updatedEntries });
+
+    console.log("Mood saved successfully!");
+  } catch (error) {
+    console.error("Error saving mood:", error);
+    throw error;
+  }
+};
+
+// Fetch mood data for a specific date
+export const fetchMoodData = async (userId, dateString) => {
+  try {
+    const dayDoc = doc(FIRESTORE_DB, "users", userId, "Mood", dateString);
+    const docSnap = await getDoc(dayDoc);
+
+    if (docSnap.exists()) {
+      return docSnap.data(); // Return the mood data
+    } else {
+      console.log("No mood data for this date.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching mood data:", error);
+    throw error;
+  }
+};
+
+export const updateMood = async (userId, date, updatedEntry) => {
+  try {
+    // Reference the day's document in Firestore
+    const dayDocRef = doc(FIRESTORE_DB, "users", userId, "Mood", date);
+
+    // Fetch the existing document
+    const docSnap = await getDoc(dayDocRef);
+
+    if (!docSnap.exists()) {
+      throw new Error("No data found for the specified date.");
+    }
+
+    // Get the current entries
+    const data = docSnap.data();
+    const updatedEntries = data.entries.map((entry) =>
+      entry.timestamp === updatedEntry.timestamp ? updatedEntry : entry
+    );
+
+    // Update the document in Firestore
+    await updateDoc(dayDocRef, { entries: updatedEntries });
+
+    console.log("Mood updated successfully!");
+  } catch (error) {
+    console.error("Error updating mood:", error);
+    throw error;
   }
 };
