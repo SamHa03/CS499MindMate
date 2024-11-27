@@ -182,8 +182,6 @@ const BreathingAction = () => {
   // ==============  Return Main Function ======================
   return (
     <View style={styles.container}>
-      <View style={styles.circleBehind} />
-
       {/* FIRST BUTTON */}
       <Pressable
         style={({ pressed }) => [

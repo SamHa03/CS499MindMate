@@ -100,11 +100,11 @@ const isValidPassword = (password) => {
         />
         {/* Loading Indicator or Action Buttons */}
         {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" color="#a3b18a" />
         ) : (
           <>
-            <Button title="Login" onPress={signIn} />
-            <Button title="Create Account" onPress={signUp} />
+            <Button color='#69655E' title="Login" onPress={signIn} />
+            <Button color='#69655E' title="Create Account" onPress={signUp} />
           </>
         )}
       </KeyboardAvoidingView>

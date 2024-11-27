@@ -7,6 +7,7 @@ import { StyleSheet } from "react-native";
 // **Main Export**
 export const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#f2eee9',
     flex: 1,
     justifyContent: "center",
     marginHorizontal: 20,
@@ -19,4 +20,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#fff",
     marginVertical: 8,
   },
+  text: {
+    color: '#69655E',
+  }
 });

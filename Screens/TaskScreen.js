@@ -54,7 +54,7 @@ const TaskScreen = () => {
       <View style={styles.header}>
         <Text style={styles.headerText}>Upcoming Tasks</Text>
         <TouchableOpacity onPress={() => setIsCreateModalVisible(true)}>
-          <Ionicons name="add-circle-outline" size={32} color="#4acfc9" />
+          <Ionicons name="add-circle-outline" size={32} color="#69655E" />
         </TouchableOpacity>
       </View>
 

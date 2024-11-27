@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const CustomCheckBox = ({ value, onValueChange }) => {
+const CustomCheckBoxGreen = ({ value, onValueChange }) => {
   return (
     <TouchableOpacity
       onPress={() => onValueChange(!value)}
@@ -11,13 +11,13 @@ const CustomCheckBox = ({ value, onValueChange }) => {
       <Ionicons
         name={value ? 'checkbox' : 'square-outline'}
         size={24}
-        color={value ? '#f2eee9' : '#CCC'}
+        color={value ? '#a3b18a' : '#CCC'}
       />
     </TouchableOpacity>
   );
 };
 
-export default CustomCheckBox;
+export default CustomCheckBoxGreen;
 
 const styles = StyleSheet.create({
   checkboxContainer: {

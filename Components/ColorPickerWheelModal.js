@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalTitle: {
+    color: "#69655E",
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 20,
@@ -68,7 +69,7 @@ const styles = StyleSheet.create({
     marginBottom: 115, // Space between color picker and button
   },
   modalButton: {
-    backgroundColor: "#4acfc9",
+    backgroundColor: "#FFFF",
     paddingVertical: 12,
     paddingHorizontal: 25,
     borderRadius: 5,
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
     width: "60%",
   },
   buttonText: {
-    color: "#FFFFFF",
+    color: "#69655E",
     fontSize: 16,
     fontWeight: "bold",
     textAlign: "center",

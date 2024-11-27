@@ -2,11 +2,12 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
+    alignItems: "center",
+    backgroundColor: "#F2EEE9",
     flex: 1,
     justifyContent: "flex-start",
-    alignItems: "center",
+    maxHeight: 700,
     padding: 20,
-    backgroundColor: "#F2EEE9",
   },
   safeArea: {
     width: "100%",
