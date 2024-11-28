@@ -7,6 +7,7 @@ import { View, Text, StyleSheet, TextInput, Button, KeyboardAvoidingView, Activi
 import { useNavigation } from '@react-navigation/native';
 import { FIREBASE_AUTH } from '../Config/firebase-config';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 // Styles
 import { styles } from "../Styles/LoginStyles";
@@ -108,6 +109,13 @@ const isValidPassword = (password) => {
           </>
         )}
       </KeyboardAvoidingView>
+      <View style={styles.iconContainer}>
+        <MaterialCommunityIcons 
+          name="head" 
+          size={500} 
+          color="#d4c3b4"/>
+      <Text style={styles.iconText}>Mind{"\n"}    Mate</Text>
+      </View>
     </View>
   );
 };
