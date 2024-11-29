@@ -84,5 +84,20 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
     color: "#333",
     textAlign: "center",
+  },
+  calendarDropdown: {
+    alignSelf: "flex-start",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginBottom: 10,
+    backgroundColor: "#F2EEE9",
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  calendarText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
   },  
 });

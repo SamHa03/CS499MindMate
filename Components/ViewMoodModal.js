@@ -7,8 +7,16 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
+import { deleteMood } from "../Helpers/firestore-helpers"; // Import deleteMood function
 
-const ViewMoodModal = ({ visible, onClose, moodEntry, onUpdateNote }) => {
+const ViewMoodModal = ({
+  visible,
+  onClose,
+  moodEntry,
+  onUpdateNote,
+  userId, // Pass userId for Firebase operations
+  onRefresh, // Callback to refresh the mood log
+}) => {
   const [note, setNote] = useState("");
 
   // Ensure the modal's note matches the selected moodEntry's note
@@ -23,12 +31,30 @@ const ViewMoodModal = ({ visible, onClose, moodEntry, onUpdateNote }) => {
     onClose(); // Close the modal
   };
 
+  const handleDelete = async () => {
+    if (!userId || !moodEntry) return;
+
+    try {
+      const dateString = new Date(moodEntry.timestamp).toISOString().split("T")[0];
+      await deleteMood(userId, dateString, moodEntry.timestamp); // Delete mood from Firestore
+      if (onRefresh) await onRefresh(); // Refresh mood log after deletion
+      onClose(); // Close the modal
+    } catch (error) {
+      console.error("Error deleting mood:", error);
+    }
+  };
+
   if (!moodEntry) return null; // Do not render if no moodEntry is selected
 
   return (
     <Modal transparent={true} visible={visible} animationType="slide">
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
+          {/* Close Button */}
+          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+            <Text style={styles.closeButtonText}>×</Text>
+          </TouchableOpacity>
+
           <Text style={styles.modalTitle}>Mood Details</Text>
           <Text style={styles.moodDetail}>
             <Text style={styles.label}>Time: </Text>
@@ -46,9 +72,11 @@ const ViewMoodModal = ({ visible, onClose, moodEntry, onUpdateNote }) => {
             multiline
           />
           <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.button} onPress={onClose}>
-              <Text style={styles.buttonText}>Cancel</Text>
+            {/* Delete Button */}
+            <TouchableOpacity style={[styles.button, styles.deleteButton]} onPress={handleDelete}>
+              <Text style={styles.buttonText}>Delete</Text>
             </TouchableOpacity>
+            {/* Save Button */}
             <TouchableOpacity style={styles.button} onPress={handleSave}>
               <Text style={styles.buttonText}>Save</Text>
             </TouchableOpacity>
@@ -71,6 +99,18 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "white",
     borderRadius: 10,
+    position: "relative",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    zIndex: 1,
+  },
+  closeButtonText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
   },
   modalTitle: {
     fontSize: 18,
@@ -96,17 +136,23 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
   },
   button: {
     backgroundColor: "#4CAF50",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  deleteButton: {
+    backgroundColor: "#FF6347", // Red for delete
   },
   buttonText: {
     color: "white",
     fontSize: 16,
+    textAlign: "center",
   },
 });
 

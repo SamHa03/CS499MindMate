@@ -201,3 +201,29 @@ export const updateMood = async (userId, date, updatedEntry) => {
     throw error;
   }
 };
+
+export const deleteMood = async (userId, date, timestamp) => {
+  try {
+    // Reference the day's document in Firestore
+    const dayDocRef = doc(FIRESTORE_DB, "users", userId, "Mood", date);
+
+    // Fetch the existing document
+    const docSnap = await getDoc(dayDocRef);
+
+    if (!docSnap.exists()) {
+      throw new Error("No data found for the specified date.");
+    }
+
+    // Filter out the mood with the matching timestamp
+    const data = docSnap.data();
+    const updatedEntries = data.entries.filter((entry) => entry.timestamp !== timestamp);
+
+    // Update the document in Firestore
+    await updateDoc(dayDocRef, { entries: updatedEntries });
+
+    console.log("Mood deleted successfully!");
+  } catch (error) {
+    console.error("Error deleting mood:", error);
+    throw error;
+  }
+};
