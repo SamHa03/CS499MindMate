@@ -9,13 +9,13 @@ import {
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import ColorPickerWheelModal from './ColorPickerWheelModal';
-import CustomCheckBox from './CustomCheckBox';
+import CustomCheckBoxGreen from './CustomCheckBoxGreen';
 
 const CreateTask = ({ visible, onClose, onSave }) => {
   const [taskName, setTaskName] = useState('');
   const [taskDate, setTaskDate] = useState(new Date().toISOString().split('T')[0]);
   const [taskTime, setTaskTime] = useState('');
-  const [taskColor, setTaskColor] = useState('#FF0000');
+  const [taskColor, setTaskColor] = useState('#a3b18a');
   const [isTimeSpecified, setIsTimeSpecified] = useState(false);
   const [isColorPickerVisible, setIsColorPickerVisible] = useState(false);
 
@@ -35,7 +35,7 @@ const CreateTask = ({ visible, onClose, onSave }) => {
     setTaskName('');
     setTaskDate(new Date().toISOString().split('T')[0]);
     setTaskTime('');
-    setTaskColor('#FF0000');
+    setTaskColor('#a3b18a');
     setIsTimeSpecified(false);
     setIsColorPickerVisible(false);
   };
@@ -61,7 +61,7 @@ const CreateTask = ({ visible, onClose, onSave }) => {
           />
 
           {/* Select Date */}
-          <Text style={styles.modalSubtitle}>Select Due Date</Text>
+          <Text style={styles.modalSubtitle}>Due Date</Text>
           <Calendar
             onDayPress={(day) => setTaskDate(day.dateString)}
             markedDates={{
@@ -69,25 +69,10 @@ const CreateTask = ({ visible, onClose, onSave }) => {
             }}
           />
 
-          {/* Select Color */}
-          <Text style={styles.modalSubtitle}>Pick Task Color</Text>
-          <Pressable
-            style={[styles.colorPickerButton, { backgroundColor: taskColor }]}
-            onPress={() => setIsColorPickerVisible(true)}
-          >
-            <Text style={styles.colorPickerButtonText}>Pick a Color</Text>
-          </Pressable>
-          <ColorPickerWheelModal
-            visible={isColorPickerVisible}
-            currentColor={taskColor}
-            onClose={() => setIsColorPickerVisible(false)}
-            onColorSelect={(color) => setTaskColor(color)}
-          />
-
           {/* Specify Time */}
           <View style={styles.timeContainer}>
             <Text style={styles.modalSubtitle}>Specific Time?</Text>
-            <CustomCheckBox
+            <CustomCheckBoxGreen
               value={isTimeSpecified}
               onValueChange={setIsTimeSpecified}
             />
@@ -101,6 +86,20 @@ const CreateTask = ({ visible, onClose, onSave }) => {
               style={styles.input}
             />
           )}
+
+          {/* Select Color */}
+          <Pressable
+            style={[styles.colorPickerButton, { backgroundColor: taskColor }]}
+            onPress={() => setIsColorPickerVisible(true)}
+          >
+            <Text style={styles.colorPickerButtonText}>Pick a Color</Text>
+          </Pressable>
+          <ColorPickerWheelModal
+            visible={isColorPickerVisible}
+            currentColor={taskColor}
+            onClose={() => setIsColorPickerVisible(false)}
+            onColorSelect={(color) => setTaskColor(color)}
+          />
 
           {/* Buttons */}
           <View style={styles.modalButtons}>
@@ -135,7 +134,7 @@ const styles = StyleSheet.create({
   modalContent: {
     width: '90%',
     padding: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#f2eee9',
     borderRadius: 10,
   },
   modalTitle: {
@@ -144,8 +143,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   modalSubtitle: {
+    color: '#69655E',
     fontSize: 16,
-    marginTop: 10,
+    fontWeight: 'bold',
+    marginLeft: 3,
+    verticalAlign: 'center',
   },
   input: {
     borderWidth: 1,
@@ -180,19 +182,20 @@ const styles = StyleSheet.create({
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+
   },
   button: {
-    flex: 1,
-    padding: 10,
-    borderRadius: 5,
     alignItems: 'center',
+    borderRadius: 5,
+    flex: 1,
     marginHorizontal: 5,
+    padding: 10,
   },
   cancelButton: {
-    backgroundColor: '#CBABD1',
+    backgroundColor: '#d4c3b4',
   },
   saveButton: {
-    backgroundColor: '#4acfc9',
+    backgroundColor: '#d4c3b4',
   },
   buttonText: {
     color: '#FFF',
