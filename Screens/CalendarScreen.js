@@ -9,6 +9,7 @@ import EditTask from '../Components/EditTaskModal';
 import { fetchTasks, updateTask } from "../Helpers/firestore-helpers";
 import { FIREBASE_AUTH } from "../Config/firebase-config";
 import { useFocusEffect } from "@react-navigation/native";
+import DailyQuotes from "../Components/DailyQuotes";
 
 // Styles
 import { styles } from "../Styles/CalendarStyles";
@@ -22,6 +23,8 @@ const CalendarScreen = () => {
   const [markedDates, setMarkedDates] = useState({}); // Dates marked with tasks on the calendar
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [dailyQuote, setDailyQuote] = useState('');
+
 
   // **Load Tasks and Marked Dates**
   const loadTasks = useCallback(async () => {
@@ -76,6 +79,10 @@ const CalendarScreen = () => {
     loadTasks();
   }, [loadTasks]);
 
+  useEffect(() => {
+    setDailyQuote(DailyQuotes.getQuoteForDate(selectedDate));
+  }, [selectedDate]);
+
   // **Toggle Task Completion**
   const toggleTaskCompletion = async (taskId, completed) => {
     try {
@@ -110,6 +117,11 @@ const CalendarScreen = () => {
         markingType="multi-dot"
         onDayPress={(day) => setSelectedDate(day.dateString)} // Update selected date
       />
+
+      {/* Daily Quote for Selected Date */}
+      <View style={styles.quoteContainer}>
+          <Text style={styles.quoteText}>{dailyQuote}</Text>
+      </View>
 
       {/* Task List for Selected Date */}
       <Text style={styles.taskHeaderText}>Tasks for {selectedDate}:</Text>

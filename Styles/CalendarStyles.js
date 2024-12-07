@@ -52,4 +52,25 @@ export const styles = StyleSheet.create({
     textAlign: "center",
     width: "90%",
   },
+  quoteHeader: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#69655E",
+    marginVertical: 10,
+  },
+  quoteContainer: {
+    padding: 10,
+    marginBottom: 20,
+    backgroundColor: "#F2EEE9",
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  quoteText: {
+    fontSize: 16,
+    color: "#8e9c77",
+    textAlign: "center",
+  },  
 });
