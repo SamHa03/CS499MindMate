@@ -19,9 +19,8 @@ import { fetchUserData } from "./Helpers/firestore-helpers";
 import Login from "./Screens/LoginScreen";
 import SetProfileScreen from "./Screens/SetProfileScreen";
 import EditProfileScreen from "./Screens/EditProfileScreen";
-import BreathingAction from "./Screens/BreathingAction";
+import BreathingScreen from "./Screens/BreathingScreen";
 import ProfileScreen from "./Screens/ProfileScreen";
-import TimerScreen from "./Screens/breathing";
 import MoodScreen from "./Screens/MoodScreen";
 import CalendarScreen from "./Screens/CalendarScreen";
 import TaskScreen from "./Screens/TaskScreen";
@@ -78,8 +77,8 @@ function InsideTabNavigator() {
     >
       {/* Timer Tab */}
       <Tab.Screen
-        name="Timer"
-        component={TimerScreen}
+        name="Breathing"
+        component={BreathingScreen}
         options={{
           tabBarIcon: ({ color }) => <Ionicons name="alarm-outline" color={color} size={35} />,
         }}
@@ -114,21 +113,7 @@ function InsideTabNavigator() {
         component={ProfileScreen}
         initialParams={{ profilePic }}
         options={{
-          tabBarIcon: ({ color }) =>
-            profilePic ? (
-              <Image
-                source={{ uri: profilePic }}
-                style={{
-                  width: 35,
-                  height: 35,
-                  borderRadius: 17.5,
-                  borderWidth: 1,
-                  borderColor: color,
-                }}
-              />
-            ) : (
-              <Ionicons name="person-circle-outline" color={color} size={35} />
-            ),
+          tabBarIcon: ({ color }) => <Ionicons name="person-circle-outline" color={color} size={35} />,
         }}
       />
     </Tab.Navigator>
@@ -140,7 +125,7 @@ function InsideLayout() {
   return (
     <InsideStack.Navigator>
       <InsideStack.Screen name="Main" component={InsideTabNavigator} options={{ headerShown: false }} />
-      <InsideStack.Screen name="BreathingAction" component={BreathingAction} />
+      <InsideStack.Screen name="BreathingAction" component={BreathingScreen} />
       <InsideStack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: "Edit Profile" }} />
     </InsideStack.Navigator>
   );

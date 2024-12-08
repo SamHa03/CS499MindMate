@@ -20,37 +20,6 @@ export default function SetProfileScreen({ navigation }) {
 
   const user = FIREBASE_AUTH.currentUser; // Current authenticated user
 
-  // **Select and Upload Profile Picture**
-  const handleSelectImage = async () => {
-    try {
-      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!permissionResult.granted) {
-        alert("Permission to access the camera roll is required!");
-        return;
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        quality: 1,
-      });
-
-      if (!result.cancelled) {
-        const { uri } = result;
-        const storageRef = ref(FIREBASE_STORAGE, `profilePictures/${user.uid}`);
-        const response = await fetch(uri);
-        const blob = await response.blob();
-
-        await uploadBytes(storageRef, blob);
-        const downloadUrl = await getDownloadURL(storageRef);
-        setProfilePicUrl(downloadUrl);
-      }
-    } catch (error) {
-      console.error("Error during image upload:", error);
-      alert("An error occurred during the upload. Please try again.");
-    }
-  };
-
   // **Save Profile**
   const handleSaveProfile = async () => {
     if (!username) {
@@ -65,9 +34,9 @@ export default function SetProfileScreen({ navigation }) {
         return;
       }
 
-      await saveUserData(user.uid, username, biography, profilePicUrl || "https://via.placeholder.com/100");
+      await saveUserData(user.uid, username, biography);
       Alert.alert("Profile set successfully!");
-      navigation.navigate("Inside"); // Navigate to the main app screen or home screen
+      navigation.navigate("Inside");
     } catch (error) {
       console.error("Error saving profile:", error);
       Alert.alert("Failed to set profile. Please try again.");
@@ -78,13 +47,6 @@ export default function SetProfileScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Set Up Your Profile</Text>
-      <TouchableOpacity onPress={handleSelectImage}>
-        <Image
-          source={{ uri: profilePicUrl || "https://via.placeholder.com/100" }}
-          style={styles.profilePic}
-        />
-        <Text>Tap to select an image</Text>
-      </TouchableOpacity>
       <Text style={styles.label}>Username *</Text>
       <TextInput
         style={styles.input}

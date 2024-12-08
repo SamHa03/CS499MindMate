@@ -80,14 +80,14 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   moodLogHeader: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: "bold",
     marginBottom: 10,
     color: "#333",
     textAlign: "center",
   },
   calendarDropdown: {
-    alignSelf: "flex-start",
+    alignSelf: "center",
     paddingHorizontal: 10,
     paddingVertical: 5,
     marginBottom: 10,

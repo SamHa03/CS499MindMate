@@ -18,12 +18,11 @@ import {
 
 // **Save User Data**
 // Stores user profile information in Firestore.
-export const saveUserData = async (userId, username, bio, profilePicUrl) => {
+export const saveUserData = async (userId, username, bio) => {
   try {
     await setDoc(doc(FIRESTORE_DB, "users", userId), {
       username,
       bio,
-      profilePicture: profilePicUrl,
     });
     console.log("User data saved successfully!");
   } catch (error) {
@@ -126,104 +125,110 @@ export const deleteTask = async (userId, taskId) => {
   }
 };
 
-// Save mood to Firestore
-export const saveMood = async (userId, moodData) => {
+// **Save Mood Entry**
+// Adds a mood entry to the Firestore database for the given user and date.
+export const saveMoodEntry = async (userId, date, moodData) => {
   try {
-    const now = new Date();
-    const dateString = now.toISOString().split("T")[0]; // Use today's date as the document ID
-
-    const dayDocRef = doc(FIRESTORE_DB, "users", userId, "Mood", dateString);
-
-    // Fetch the existing document
-    const docSnap = await getDoc(dayDocRef);
-    let updatedEntries = [];
-
-    if (docSnap.exists()) {
-      // Get existing entries and append the new mood data
-      const existingData = docSnap.data();
-      updatedEntries = existingData.entries || [];
-    }
-
-    updatedEntries.push(moodData); // Add the new mood entry
-
-    // Save the updated document back to Firestore
-    await setDoc(dayDocRef, { entries: updatedEntries });
-
-    console.log("Mood saved successfully!");
-  } catch (error) {
-    console.error("Error saving mood:", error);
-    throw error;
-  }
-};
-
-// Fetch mood data for a specific date
-export const fetchMoodData = async (userId, dateString) => {
-  try {
-    const dayDoc = doc(FIRESTORE_DB, "users", userId, "Mood", dateString);
-    const docSnap = await getDoc(dayDoc);
-
-    if (docSnap.exists()) {
-      return docSnap.data(); // Return the mood data
-    } else {
-      console.log("No mood data for this date.");
-      return null;
-    }
-  } catch (error) {
-    console.error("Error fetching mood data:", error);
-    throw error;
-  }
-};
-
-export const updateMood = async (userId, date, updatedEntry) => {
-  try {
-    // Reference the day's document in Firestore
-    const dayDocRef = doc(FIRESTORE_DB, "users", userId, "Mood", date);
-
-    // Fetch the existing document
-    const docSnap = await getDoc(dayDocRef);
-
-    if (!docSnap.exists()) {
-      throw new Error("No data found for the specified date.");
-    }
-
-    // Get the current entries
-    const data = docSnap.data();
-    const updatedEntries = data.entries.map((entry) =>
-      entry.timestamp === updatedEntry.timestamp ? updatedEntry : entry
+    const entriesCollectionRef = collection(
+      FIRESTORE_DB,
+      'users',
+      userId,
+      'moods',
+      date,
+      'entries'
     );
-
-    // Update the document in Firestore
-    await updateDoc(dayDocRef, { entries: updatedEntries });
-
-    console.log("Mood updated successfully!");
+    await addDoc(entriesCollectionRef, moodData);
+    console.log('Mood entry added successfully!');
   } catch (error) {
-    console.error("Error updating mood:", error);
-    throw error;
+    console.error('Error adding mood entry:', error);
   }
 };
 
-export const deleteMood = async (userId, date, timestamp) => {
+// **Fetch Mood Entries for a Date**
+// Retrieves all mood entries for a specific date.
+export const fetchMoodEntriesForDate = async (userId, date) => {
   try {
-    // Reference the day's document in Firestore
-    const dayDocRef = doc(FIRESTORE_DB, "users", userId, "Mood", date);
+    const entriesCollectionRef = collection(
+      FIRESTORE_DB,
+      'users',
+      userId,
+      'moods',
+      date,
+      'entries'
+    );
+    const querySnapshot = await getDocs(entriesCollectionRef);
+    const moodEntries = [];
+    querySnapshot.forEach((doc) => {
+      moodEntries.push({ id: doc.id, ...doc.data() });
+    });
+    return moodEntries;
+  } catch (error) {
+    console.error('Error fetching mood entries:', error);
+    return [];
+  }
+};
 
-    // Fetch the existing document
-    const docSnap = await getDoc(dayDocRef);
+// **Update Mood Entry**
+// Updates a specific mood entry in Firestore.
+export const updateMoodEntry = async (userId, date, entryId, updatedEntry) => {
+  try {
+    const entryDocRef = doc(
+      FIRESTORE_DB,
+      'users',
+      userId,
+      'moods',
+      date,
+      'entries',
+      entryId
+    );
+    await updateDoc(entryDocRef, updatedEntry);
+    console.log('Mood entry updated successfully!');
+  } catch (error) {
+    console.error('Error updating mood entry:', error);
+  }
+};
 
-    if (!docSnap.exists()) {
-      throw new Error("No data found for the specified date.");
+// **Delete Mood Entry**
+// Deletes a specific mood entry from Firestore.
+export const deleteMoodEntry = async (userId, dateString, entryId) => {
+  try {
+    const entryDocRef = doc(
+      FIRESTORE_DB,
+      'users',
+      userId,
+      'moods',
+      dateString,
+      'entries',
+      entryId
+    );
+    await deleteDoc(entryDocRef);
+    console.log('Mood entry deleted successfully!');
+  } catch (error) {
+    console.error('Error deleting mood entry:', error);
+  }
+};
+
+// **Delete User Data**
+// Deletes user profile and all associated collections from Firestore.
+export const deleteUserData = async (userId) => {
+  try {
+    // Reference to the user's document
+    const userDocRef = doc(FIRESTORE_DB, "users", userId);
+
+    // Delete subcollections (e.g., tasks, moods)
+    const subcollections = ["tasks", "moods"]; // Add any other subcollections here
+    for (const subcollection of subcollections) {
+      const subcollectionRef = collection(userDocRef, subcollection);
+      const subcollectionSnapshot = await getDocs(subcollectionRef);
+      subcollectionSnapshot.forEach(async (doc) => {
+        await deleteDoc(doc.ref);
+      });
     }
 
-    // Filter out the mood with the matching timestamp
-    const data = docSnap.data();
-    const updatedEntries = data.entries.filter((entry) => entry.timestamp !== timestamp);
-
-    // Update the document in Firestore
-    await updateDoc(dayDocRef, { entries: updatedEntries });
-
-    console.log("Mood deleted successfully!");
+    // Delete the user's document
+    await deleteDoc(userDocRef);
+    console.log("User data deleted successfully!");
   } catch (error) {
-    console.error("Error deleting mood:", error);
-    throw error;
+    console.error("Error deleting user data: ", error);
   }
 };
