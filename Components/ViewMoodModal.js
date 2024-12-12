@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { deleteMood } from "../Helpers/firestore-helpers"; // Import deleteMood function
+import { deleteMoodEntry } from "../Helpers/firestore-helpers"; // Import deleteMood function
 
 const ViewMoodModal = ({
   visible,
@@ -36,7 +36,7 @@ const ViewMoodModal = ({
 
     try {
       const dateString = new Date(moodEntry.timestamp).toISOString().split("T")[0];
-      await deleteMood(userId, dateString, moodEntry.timestamp); // Delete mood from Firestore
+      await deleteMoodEntry(userId, dateString, moodEntry.id);
       if (onRefresh) await onRefresh(); // Refresh mood log after deletion
       onClose(); // Close the modal
     } catch (error) {

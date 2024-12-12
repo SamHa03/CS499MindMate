@@ -13,7 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import CustomCheckBox from "../Components/CustomCheckBox";
 import EditTask from "../Components/EditTaskModal";
 import CreateTask from "../Components/CreateTaskModal";
-import { fetchTasks, updateTask, saveTask } from "../Helpers/firestore-helpers";
+import { fetchTasks, updateTask, saveTask, deleteTask } from "../Helpers/firestore-helpers";
 import { FIREBASE_AUTH } from "../Config/firebase-config";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -46,6 +46,16 @@ const TaskScreen = () => {
   const toggleTaskCompletion = async (taskId, currentState) => {
     await updateTask(userId, taskId, { completed: !currentState }); // Update Firebase
     loadTasks(); // Refresh tasks
+  };
+
+  // Function to delete a task
+  const handleDeleteTask = async (taskId) => {
+    try {
+      await deleteTask(userId, taskId); // Call the Firestore helper to delete the task
+      loadTasks(); // Refresh the task list
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
   };
 
   return (
@@ -106,6 +116,7 @@ const TaskScreen = () => {
           await updateTask(userId, updatedTask.id, updatedTask); // Update task in Firebase
           loadTasks(); // Refresh tasks
         }}
+        onDelete={handleDeleteTask} // Pass the delete function
       />
     </View>
   );

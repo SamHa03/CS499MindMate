@@ -3,7 +3,7 @@
 
 // **Imports**
 import React, { useCallback, useState } from "react";
-import { View, Text, Button, Image, ActivityIndicator, Alert } from "react-native";
+import { View, Text, Button, ActivityIndicator, Alert } from "react-native";
 import { FIREBASE_AUTH } from "../Config/firebase-config";
 import { fetchUserData } from "../Helpers/firestore-helpers";
 import { signOut } from "firebase/auth";
@@ -15,7 +15,6 @@ import { styles } from "../Styles/ProfileStyles";
 
 export default function ProfileScreen({ navigation }) {
   // **State Variables**
-  const [profilePic, setProfilePic] = useState("https://via.placeholder.com/100"); // Profile picture URL
   const [username, setUsername] = useState("Username"); // Username
   const [biography, setBiography] = useState("Short bio goes here..."); // User bio
   const [loading, setLoading] = useState(true); // Loading state for data fetching
@@ -34,7 +33,6 @@ export default function ProfileScreen({ navigation }) {
       if (userData) {
         setUsername(userData.username);
         setBiography(userData.bio);
-        setProfilePic(userData.profilePicture || "https://via.placeholder.com/100");
       }
     } catch (error) {
       console.error("Error loading user data:", error);
@@ -78,7 +76,6 @@ export default function ProfileScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.profileSection}>
-        <Image source={{ uri: profilePic }} style={styles.profilePic} />
         <View style={styles.textContainer}>
           <Text style={styles.username}>{username}</Text>
           <Text style={styles.bio}>{biography}</Text>

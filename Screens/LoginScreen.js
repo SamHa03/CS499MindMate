@@ -71,7 +71,12 @@ const isValidPassword = (password) => {
       navigation.navigate("SetProfile", { userId: response.user.uid }); // Navigate to profile setup screen
     } catch (error) {
       console.error("Sign up failed:", error);
-      Alert.alert("Sign up failed", error.message);
+      // Handle specific error codes
+      if (error.code === 'auth/email-already-in-use') {
+        Alert.alert("Sign up failed", "Email already in use");
+      } else {
+        Alert.alert("Sign up failed", error.message);
+      }
     } finally {
       setLoading(false); // Stop loading
     }

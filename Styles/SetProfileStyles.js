@@ -16,14 +16,6 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
   },
-  profilePic: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 15,
-    borderColor: "#69655E",
-    borderWidth: 2,
-  },
   label: {
     fontWeight: "bold",
     marginTop: 10,

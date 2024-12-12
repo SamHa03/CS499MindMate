@@ -5,7 +5,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, Button, Alert, TouchableOpacity, Image, Modal } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_STORAGE } from "../Config/firebase-config";
-import { updateUserData, fetchUserData, isUsernameTaken } from "../Helpers/firestore-helpers";
+import { updateUserData, fetchUserData, isUsernameTaken, deleteUserData } from "../Helpers/firestore-helpers";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import * as ImagePicker from "expo-image-picker";
@@ -18,12 +18,13 @@ export default function EditProfileScreen({ navigation }) {
   // **State Variables**
   const [username, setUsername] = useState(""); // New username
   const [biography, setBiography] = useState(""); // New bio
-  const [profilePicUrl, setProfilePicUrl] = useState(null); // Profile picture URL
   const [currentUserUsername, setCurrentUserUsername] = useState(""); // Current username
   const [currentPassword, setCurrentPassword] = useState(""); // Current password for re-authentication
   const [newPassword, setNewPassword] = useState(""); // New password
   const [modalVisible, setModalVisible] = useState(false); // Modal visibility state
   const user = FIREBASE_AUTH.currentUser; // Current authenticated user
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false); // Modal visibility for account deletion
+  const [deletePassword, setDeletePassword] = useState(""); // Password for account deletion
 
   // **Load User Data**
   useEffect(() => {
@@ -38,7 +39,6 @@ export default function EditProfileScreen({ navigation }) {
         if (userData) {
           setUsername(userData.username);
           setBiography(userData.bio);
-          setProfilePicUrl(userData.profilePicture || "https://via.placeholder.com/100");
           setCurrentUserUsername(userData.username);
         }
       } catch (error) {
@@ -66,63 +66,6 @@ export default function EditProfileScreen({ navigation }) {
     );
   };
 
-  // **Select and Upload Profile Picture**
-  const handleSelectImage = async () => {
-    try {
-      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!permissionResult.granted) {
-        alert("Permission to access the camera roll is required!");
-        return;
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        quality: 1,
-      });
-
-      console.log("Image Picker Result:", result);
-
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        let { uri } = result.assets[0]; // Access the first asset's uri
-        console.log("Image URI:", uri);
-  
-        // Compress or resize the image to reduce file size
-        const compressedImage = await ImageManipulator.manipulateAsync(
-          uri,
-          [{ resize: { width: 1000 } }], // Resize to a smaller width while maintaining aspect ratio
-          { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
-        );
-
-        uri = compressedImage.uri;
-        console.log("Compressed Image URI:", uri);
-
-        if (uri) {
-          // Proceed with the image upload process
-          const response = await fetch(uri);
-          if (!response.ok) {
-            throw new Error("Failed to fetch the image for upload.");
-          }
-  
-          const blob = await response.blob();
-          const storageRef = ref(FIREBASE_STORAGE, `profilePictures/${user.uid}`);
-  
-          // Upload the image to Firebase Storage
-          await uploadBytes(storageRef, blob);
-          const downloadUrl = await getDownloadURL(storageRef);
-  
-          setProfilePicUrl(downloadUrl);
-          Alert.alert("Profile picture updated successfully!");
-        } else {
-          alert("An error occurred while selecting the image. Please try again.");
-        }
-      }
-    } catch (error) {
-      console.error("Error during image upload:", error);
-      alert("An error occurred during the upload. Please try again.");
-    }
-  };
-
   // **Save Profile**
   const handleSaveProfile = async () => {
     if (!user) {
@@ -139,7 +82,7 @@ export default function EditProfileScreen({ navigation }) {
         }
       }
 
-      await updateUserData(user.uid, { username, bio: biography, profilePicture: profilePicUrl });
+      await updateUserData(user.uid, { username, bio: biography });
       Alert.alert("Profile updated successfully!");
       navigation.goBack();
     } catch (error) {
@@ -181,18 +124,42 @@ export default function EditProfileScreen({ navigation }) {
     }
   };
 
+  // **Delete Account**
+  const handleDeleteAccount = async () => {
+    if (!user) {
+      Alert.alert("User not logged in.");
+      return;
+    }
+
+    if (!deletePassword) {
+      Alert.alert("Please enter your password to delete your account.");
+      return;
+    }
+
+    try {
+      const credential = EmailAuthProvider.credential(user.email, deletePassword);
+      await reauthenticateWithCredential(user, credential);
+
+      // Delete user data from Firestore
+      await deleteUserData(user.uid);
+
+      // Delete the user's authentication account
+      await user.delete();
+      Alert.alert("Account deleted successfully!");
+      navigation.navigate("Login");
+    } catch (error) {
+      console.error("Error deleting account: ", error);
+      Alert.alert("Error deleting account: " + error.message);
+    } finally {
+      setDeletePassword(""); // Clear password input
+      setDeleteModalVisible(false); // Close modal
+    }
+  };
+
   // **UI Rendering**
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Edit Profile</Text>
-
-      <TouchableOpacity onPress={handleSelectImage}>
-        <Image
-          source={{ uri: profilePicUrl || "https://via.placeholder.com/100" }}
-          style={styles.profilePic}
-        />
-        <Text>Tap to select an image</Text>
-      </TouchableOpacity>
 
       <Text style={styles.labelText}>Username</Text>
       <TextInput
@@ -219,7 +186,10 @@ export default function EditProfileScreen({ navigation }) {
       />
       <Button title="Save Profile" onPress={handleSaveProfile} color="#CBABD1" />
 
-      <Button title="Change Password" onPress={() => setModalVisible(true)} color="#CBABD1" />
+      <View style={styles.bottomButtonsContainer}>
+        <Button title="Change Password" onPress={() => setModalVisible(true)} color="#CBABD1" />
+        <Button title="Delete Account" onPress={() => setDeleteModalVisible(true)} color="#FF0000" />
+      </View>
 
       <Modal
         animationType="slide"
@@ -248,6 +218,31 @@ export default function EditProfileScreen({ navigation }) {
             />
             <Button title="Submit" onPress={handleChangePassword} color="#CBABD1" />
             <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.cancelButton}>
+              <Text style={styles.cancelText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={deleteModalVisible}
+        onRequestClose={() => setDeleteModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalTitle}>Confirm Account Deletion</Text>
+            <TextInput
+              style={[styles.input, styles.widerInput]}
+              placeholder="Enter Password"
+              placeholderTextColor="#CCCCCC"
+              secureTextEntry
+              value={deletePassword}
+              onChangeText={setDeletePassword}
+            />
+            <Button title="Delete Account" onPress={handleDeleteAccount} color="#FF0000" />
+            <TouchableOpacity onPress={() => setDeleteModalVisible(false)} style={styles.cancelButton}>
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
           </View>

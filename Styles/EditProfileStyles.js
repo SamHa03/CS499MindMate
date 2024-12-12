@@ -16,14 +16,6 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
   },
-  profilePic: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 15,
-    borderColor: "#69655E",
-    borderWidth: 2,
-  },
   input: {
     height: 50,
     borderColor: "#69655E",
@@ -62,5 +54,10 @@ export const styles = StyleSheet.create({
   },
   labelText: {
     fontWeight: "bold",
+  },
+  bottomButtonsContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: 20,
   },
 });

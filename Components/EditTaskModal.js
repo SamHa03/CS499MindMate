@@ -6,18 +6,19 @@ import {
   TextInput,
   StyleSheet,
   Pressable,
+  TouchableOpacity,
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import CustomCheckBoxGreen from './CustomCheckBoxGreen';
 import ColorPickerWheelModal from './ColorPickerWheelModal';
 
-const EditTask = ({ visible, onClose, task, onSave }) => {
+const EditTask = ({ visible, onClose, task, onSave, onDelete }) => {
   const [taskName, setTaskName] = useState('');
   const [taskDate, setTaskDate] = useState('');
   const [taskTime, setTaskTime] = useState('');
   const [taskColor, setTaskColor] = useState('#FF0000');
   const [isTimeSpecified, setIsTimeSpecified] = useState(false);
-  const [isColorPickerVisible, setIsColorPickerVisible] = useState(false); // State for color picker modal
+  const [isColorPickerVisible, setIsColorPickerVisible] = useState(false);
 
   // Update state when task changes
   useEffect(() => {
@@ -31,7 +32,7 @@ const EditTask = ({ visible, onClose, task, onSave }) => {
   }, [task]);
 
   if (!task) {
-    return null; // Render nothing if no task is provided
+    return null;
   }
 
   const handleSave = () => {
@@ -45,6 +46,11 @@ const EditTask = ({ visible, onClose, task, onSave }) => {
     onClose();
   };
 
+  const handleDelete = () => {
+    onDelete(task.id);
+    onClose();
+  };
+
   return (
     <Modal
       visible={visible}
@@ -54,6 +60,9 @@ const EditTask = ({ visible, onClose, task, onSave }) => {
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
+          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+            <Text style={styles.closeButtonText}>×</Text>
+          </TouchableOpacity>
           <Text style={styles.modalTitle}>Edit Task</Text>
 
           {/* Task Name */}
@@ -74,7 +83,7 @@ const EditTask = ({ visible, onClose, task, onSave }) => {
             }}
           />
 
-         {/* Specify Time */}
+          {/* Specify Time */}
           <View style={styles.timeContainer}>
             <Text style={styles.modalSubtitle}>Specific Time?</Text>
             <CustomCheckBoxGreen
@@ -91,7 +100,7 @@ const EditTask = ({ visible, onClose, task, onSave }) => {
               style={styles.input}
             />
           )}
-          
+
           {/* Select Color */}
           <Pressable
             style={[styles.colorPickerButton, { backgroundColor: taskColor }]}
@@ -109,10 +118,10 @@ const EditTask = ({ visible, onClose, task, onSave }) => {
           {/* Buttons */}
           <View style={styles.modalButtons}>
             <Pressable
-              style={[styles.button, styles.cancelButton]}
-              onPress={onClose}
+              style={[styles.button, styles.deleteButton]}
+              onPress={handleDelete}
             >
-              <Text style={styles.buttonText}>Cancel</Text>
+              <Text style={styles.buttonText}>Delete</Text>
             </Pressable>
             <Pressable
               style={[styles.button, styles.saveButton]}
@@ -141,6 +150,17 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#f2eee9',
     borderRadius: 10,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 1,
+  },
+  closeButtonText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
   },
   modalTitle: {
     fontSize: 20,
@@ -173,21 +193,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  modalButton: {
-    backgroundColor: '#4acfc9',
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 10,
-  },
-  timeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 10,
-  },
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-
   },
   button: {
     alignItems: 'center',
@@ -196,8 +204,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     padding: 10,
   },
-  cancelButton: {
-    backgroundColor: '#d4c3b4',
+  deleteButton: {
+    backgroundColor: '#FF6347', // Red for delete
   },
   saveButton: {
     backgroundColor: '#d4c3b4',
