@@ -8,6 +8,7 @@ import { FIREBASE_AUTH } from "../Config/firebase-config";
 import { fetchUserData } from "../Helpers/firestore-helpers";
 import { signOut } from "firebase/auth";
 import { useFocusEffect } from "@react-navigation/native";
+import StatsScreenDisplayView from '../Components/StatsScreenDisplayView';
 
 // Styles
 import { styles } from "../Styles/ProfileStyles";
@@ -18,6 +19,7 @@ export default function ProfileScreen({ navigation }) {
   const [username, setUsername] = useState("Username"); // Username
   const [biography, setBiography] = useState("Short bio goes here..."); // User bio
   const [loading, setLoading] = useState(true); // Loading state for data fetching
+  const [isModalVisible, setModalVisible] = useState(false);
 
   const user = FIREBASE_AUTH.currentUser; // Currently authenticated user
 
@@ -58,6 +60,11 @@ export default function ProfileScreen({ navigation }) {
       .catch((error) => Alert.alert("Failed to log out: ", error.message));
   };
 
+  // **Render the StatsScreenDisplayModal**
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
   // **Render Loading Indicator**
   if (loading) {
     return (
@@ -77,6 +84,10 @@ export default function ProfileScreen({ navigation }) {
           <Text style={styles.bio}>{biography}</Text>
         </View>
       </View>
+
+      {/* Render StatsScreenDisplayView in the middle of the profile screen */}
+      <StatsScreenDisplayView />
+
       <View style={styles.bottomButtonsContainer}>
         <Button title="Edit Profile" onPress={() => navigation.navigate("EditProfile")} color="#CBABD1" />
         <View style={styles.spacer} />
@@ -84,4 +95,7 @@ export default function ProfileScreen({ navigation }) {
       </View>
     </View>
   );
+
 }
+
+

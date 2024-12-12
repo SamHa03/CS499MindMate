@@ -10,6 +10,7 @@ import {
   collection,
   query,
   where,
+  orderBy,
   getDocs,
   addDoc,
   deleteDoc,
@@ -163,15 +164,59 @@ export const fetchMoodData = async (userId, dateString) => {
     const docSnap = await getDoc(dayDoc);
 
     if (docSnap.exists()) {
+      //console.log("Mood data found for this date.");
+      // pretty print the data
+      //console.log(JSON.stringify(docSnap.data(), null, 2 ));
       return docSnap.data(); // Return the mood data
     } else {
-      console.log("No mood data for this date.");
+      // console.log("No mood data for this date.");
+      // console.log(dateString);
       return null;
     }
   } catch (error) {
     console.error("Error fetching mood data:", error);
     throw error;
   }
+};
+
+// fetches all mood data for a given year
+export const fetchYearlyMoodData = async (userId, year) => {
+  const moodsRef = collection(FIRESTORE_DB, "users", userId, "Mood");
+
+  const startDateString = `${year}-01-01`;
+  const endDateString = `${year}-12-31`;
+
+  // query by document ID range
+  const q = query(
+    moodsRef,
+    orderBy('__name__'),
+    where('__name__', '>=', startDateString),
+    where('__name__', '<=', endDateString)
+  );
+
+  const querySnapshot = await getDocs(q);
+  
+  const allMoodData = [];
+  querySnapshot.forEach((docSnapshot) => {
+    const data = docSnapshot.data();
+    // data is in the form { entries: [...] }
+    // docSnapshot.id will be the YYYY-MM-DD date
+    allMoodData.push({ date: docSnapshot.id, entries: data.entries });
+  });
+
+  return allMoodData;
+};
+
+// wipe all mood data for a given user
+export const deleteAllMoodData = async (userId) => {
+  const moodsRef = collection(FIRESTORE_DB, "users", userId, "Mood");
+  const querySnapshot = await getDocs(moodsRef);
+
+  querySnapshot.forEach((docSnapshot) => {
+    deleteDoc(docSnapshot.ref);
+  });
+
+  console.log("All mood data deleted successfully!");
 };
 
 export const updateMood = async (userId, date, updatedEntry) => {
